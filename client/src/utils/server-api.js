@@ -4,6 +4,7 @@ var axios = require('axios');
 
 var serverApi = function() {
 
+
 	let confing = {
 		headers: {
 			'Content-Type': 'application/json',
@@ -39,7 +40,21 @@ var serverApi = function() {
 		})
     }
 
-    
+	
+	// 根据userAccount获取渠道数据
+	this.getLatestChannleData = function(data){
+		return this.post("/getChannels",data);
+	}
+
+	// 获取投资信息
+	this.getInvestInfo = function(data) {
+		return this.post("/getFundInfoByUserAccount",data);
+	}
+
+	// 获取大笔支出信息
+	this.getMainExpend = function(data) {
+		return this.post("/getMainExpend",data);
+	}
     
 }
 

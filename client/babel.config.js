@@ -3,7 +3,8 @@ module.exports = {
     '@vue/app'
   ],
   "plugins": [
-    "transform-remove-console",
+    // 不打印日志
+    // "transform-remove-console",
     [
       "component",
       {

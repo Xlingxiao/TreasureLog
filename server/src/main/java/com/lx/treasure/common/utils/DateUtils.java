@@ -36,7 +36,17 @@ public class DateUtils {
         }
     }
 
-    public static String dateToString(long time) {
+    /**
+     *  Date对象格式化为String
+     * @param Mode 格式化的字符串
+     * @param date 需要格式化的对象
+     * @return 格式化好的对象
+     */
+    public static String dateToString(Date date) {
+        return sdfSecond.format(date);
+    }
+
+    public static String longToString(long time) {
         return sdfSecond.format(new Date(time));
     }
 

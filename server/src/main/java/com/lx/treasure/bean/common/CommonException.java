@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class CommonException extends CommonResponse {
+public class CommonException extends Exception {
 
     String resultCode;
     String message;

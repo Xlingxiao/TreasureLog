@@ -1,7 +1,7 @@
 package com.lx.treasure.common.utils;
 
 import com.lx.treasure.bean.common.DataId;
-import com.lx.treasure.bean.common.DataIdProp;
+import com.lx.treasure.bean.props.DataIdProp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

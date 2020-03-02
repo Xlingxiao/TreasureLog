@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import 'element-ui/lib/theme-chalk/index.css';
-import App from './App.vue'
+import App from './App.vue';
+
 
 import {
 	Pagination,
@@ -160,9 +161,19 @@ Vue.use(avatar);
 
 
 Vue.config.productionTip = false
+
 import serverApi from 'utils/server-api'
 Vue.prototype.http = new serverApi()
 
+import echarts from 'echarts';
+Vue.prototype.$echarts = echarts;
+
+import router from './router.js'
+
+import store from './vuex/vuex'
+
 new Vue({
+	store,
+	router,
 	render: h => h(App),
 }).$mount('#app')

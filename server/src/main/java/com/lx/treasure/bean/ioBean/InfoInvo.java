@@ -10,6 +10,8 @@ import java.util.Map;
 
 @Data
 public class InfoInvo {
+    // 个人账号
+    private long userAccount;
     // 薪水
     private double pay;
     // 花销
