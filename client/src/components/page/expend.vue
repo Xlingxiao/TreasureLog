@@ -43,7 +43,7 @@ export default {
                     formatter: "{a}<br/>{b}: {c}"
                 },
                 title: {
-                    text: "南丁格尔玫瑰图",
+                    text: "主要支出",
                     left: "center",
                     top: 20
                 },
@@ -51,18 +51,8 @@ export default {
                 legend: {
                     icon: "circle",
                     x: "center",
-                    y: "15%",
-                    data: [
-                        "义乌市1",
-                        "义乌市2",
-                        "义乌市3",
-                        "义乌市4",
-                        "义乌市5",
-                        "义乌市6",
-                        "义乌市7",
-                        "义乌市8",
-                        "义乌市9"
-                    ]
+                    y: "5%",
+                    data: []
                 },
                 series: [
                     {
@@ -99,7 +89,8 @@ export default {
                 ]
             },
             title: "主要支出",
-            theme: "macarons"
+            theme: "macarons",
+            min: 0,
         };
     },
     created() {
@@ -107,8 +98,10 @@ export default {
     beforeMount() {
         },
     mounted() {
+        let windowHeight = window.innerHeight;
+        let windowWidth = window.innerWidth;
+        this.min = Math.min(windowHeight,windowWidth);
         this.initExpends();
-        
     },
     methods: {
         initExpends() {
@@ -131,6 +124,9 @@ export default {
                     console.log(chartData);
                     this.option.title.text = this.title;
                     this.option.legend.data = legendData;
+                    this.option.legend.y = this.min * 65/500;
+                    this.option.series[0].radius = [this.min * 35/500,this.min * 135/500]
+                    this.option.series[0].center = ["50%", (this.min * 350) / 600],
                     this.option.series[0].name = this.title;
                     this.option.series[0].data = chartData;
                     console.log(this.option)

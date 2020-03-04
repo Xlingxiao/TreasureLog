@@ -16,6 +16,18 @@ import java.util.Date;
 @Entity
 public class Channel {
 
+    public Channel() {
+    }
+
+    public Channel(long infoId, long userAccount, String channel1, String channel2, double money, Date insertTime) {
+        this.infoId = infoId;
+        this.userAccount = userAccount;
+        this.channel1 = channel1;
+        this.channel2 = channel2;
+        this.money = money;
+        this.insertTime = insertTime;
+    }
+
     // id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

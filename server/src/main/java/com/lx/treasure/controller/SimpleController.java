@@ -2,6 +2,7 @@ package com.lx.treasure.controller;
 
 
 import com.lx.treasure.bean.common.CommonException;
+import com.lx.treasure.bean.common.CommonResponse;
 import com.lx.treasure.bean.common.SuccessResponse;
 import com.lx.treasure.bean.ioBean.*;
 import com.lx.treasure.bean.repositoryBean.Channel;
@@ -32,9 +33,6 @@ public class SimpleController {
     public SuccessResponse insertInfo(@RequestBody InfoInvo infoInvo) throws CommonException {
         if (StringUtils.isEmpty(infoInvo.getPay())) {
             throw  new CommonException("2", "pay不能为空");
-        }
-        if (StringUtils.isEmpty(infoInvo.getExpenditure())) {
-            throw  new CommonException("2", "expenditure不能为空");
         }
         if (StringUtils.isEmpty(infoInvo.getInfo())) {
             throw  new CommonException("2", "info不能为空");
@@ -80,6 +78,11 @@ public class SimpleController {
             throw new CommonException("400", "个人账号为空");
         }
         return channelService.getMainExpendInfo(userAccount);
+    }
+
+    @PostMapping(value = "/insert/complete")
+    public CommonResponse addCompleteLog(@RequestBody CompleteLog log){
+        return channelService.addCompleteLog(log);
     }
     /*-------------------TEST------------------*/
 

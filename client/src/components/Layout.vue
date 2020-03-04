@@ -1,7 +1,8 @@
 <template>
-    <el-container :style="farmeStyle">
-        <el-aside :width="asideWidth" style="background-color: rgb(238, 241, 246)">
+    <el-container :style="style.farmeStyle">
+        <el-aside v-show="isOpen" :width="asideWidth" style="background-color: rgb(238, 241, 246)">
             <lx-menu
+                :mode="menuMode"
                 :menus="menus"
                 :title="title"
                 :router="false"
@@ -9,12 +10,14 @@
                 :defaultOpeneds="defaultOpeneds"
                 :backgroundColor="asideColor"
                 :textColor="asideFontColor"
+                @changeOpen="changeOpenStatus"
             ></lx-menu>
         </el-aside>
         <el-container>
             <el-header>
                 <span>{{title}}</span>
             </el-header>
+        <i @click="changeOpenStatus" :class="style.switchIcon" :style="style.switch"></i>
             <el-main class="el-main">
                 <!-- <img alt="Vue logo" src="../assets/logo.png" />
                 <HelloWorld msg="Welcome to Your Vue.js App" />-->
@@ -46,14 +49,26 @@ export default {
     data() {
         return {
             title: "Treasure Life",
-            farmeStyle: {
-                height: "600px"
+
+            style: {
+                farmeStyle: {
+                    height: "100%"
+                },
+                switch: {
+                    height: "20px",
+                    width: "20px",
+                    "font-size": "20px",
+                    "background": "rgba(128,128,128,0.15)"
+                },
+                switchIcon: "el-icon-arrow-left"
             },
             asideWidth: "20%",
             asideColor: "#409EFF",
             defaultActive: "/treasure",
             defaultOpeneds: ["/treasure"],
             asideFontColor: "#fff",
+            menuMode: "horizontal",
+            isVertical: true,
             menus: [
                 {
                     index: "/treasure",
@@ -66,19 +81,48 @@ export default {
                 {
                     index: "/extend",
                     name: "支出明细"
+                },
+                {
+                    index: "/log",
+                    name: "记录一笔"
                 }
             ],
-            currentMenuName: ""
+            currentMenuName: "",
+            isOpen: true
         };
     },
-    mounted() {
+    created() {
         this.init();
+        },
+    mounted() {
+        if(this.windWidth < this.windHeight){
+            this.isOpen = false
+            this.asideWidth = "100%"
+        }
     },
     methods: {
         init() {
-            let windHeight = window.innerHeight;
-            this.farmeStyle.height = windHeight + "px";
+            this.windHeight = window.innerHeight;
+            this.windWidth = window.innerWidth;
+            this.isVertical = true;
+            this.menuMode = "vertical";
+            this.style.farmeStyle.height = this.windHeight + "px";
+            if (this.windHeight < this.windWidth) {
+            } else {
+                // this.asideWidth = "100%"
+                // this.menuMode = "horizontal"
+                // this.isVertical = false;
+            }
             this.currentMenuName = "财富分布情况";
+            console.log(windWidth, "---", windHeight);
+        },
+        changeOpenStatus() {
+            this.isOpen = !this.isOpen;
+            if(this.isOpen)
+                this.style.switchIcon = "el-icon-arrow-left"
+            else
+                this.style.switchIcon = "el-icon-arrow-right"
+            console.log("Switch Status",this.isOpen)
         }
     }
 };
@@ -96,7 +140,7 @@ export default {
     color: #333;
 }
 
-.el-main * {
+.el-main {
     padding: 0;
 }
 

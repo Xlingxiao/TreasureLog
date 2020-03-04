@@ -55,6 +55,10 @@ var serverApi = function() {
 	this.getMainExpend = function(data) {
 		return this.post("/getMainExpend",data);
 	}
+	// 输入一条完整记录
+	this.addCompleteLog = function(data) {
+		return this.post("/insert/complete",data);
+	}
     
 }
 

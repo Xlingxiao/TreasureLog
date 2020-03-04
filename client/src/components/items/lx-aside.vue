@@ -2,13 +2,14 @@
 * 生成aside
 */
 <template>
-        <el-aside :width="asideWidth">
+        <el-aside v-show="isOpen" :width="asideWidth">
             <lx-menu
                 :menus="menus"
                 :defaultActive="defaultActive"
                 :backgroundColor="asideColor"
                 :textColor="asideFontColor"
             ></lx-menu>
+            <el-button @click="changeOpenStatus"></el-button>
         </el-aside>
 </template>
 
@@ -48,7 +49,8 @@ export default {
                         }
                     ]
                 },
-            ]
+            ],
+            isOpen: true
         };
     },
     mounted() {
@@ -59,7 +61,11 @@ export default {
     //计算
     computed: {},
     //方法
-    methods: {}
+    methods: {
+        changeOpenStatus() {
+            this.isOpen = !this.isOpen;
+        }
+    }
 };
 </script>
 

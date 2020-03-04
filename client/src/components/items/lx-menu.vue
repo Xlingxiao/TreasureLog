@@ -3,11 +3,12 @@
 */
 <template>
     <div>
-        <div v-if="title" :style="style.title">
+        <div v-if="title && mode=='vertical'" :style="style.title">
             <img :style="style.title.img" src="../../assets/logo.png" />
             <p :style="style.title.text">{{title}}</p>
         </div>
         <el-menu
+            :mode="mode"
             :default-openeds="defaultOpeneds"
             :default-active="defaultActive"
             :background-color="backgroundColor"
@@ -90,6 +91,10 @@ export default {
             default() {
                 return [];
             }
+        },
+        mode: {
+            type: String,
+            default: "vertical"
         }
     },
     data() {
@@ -122,12 +127,14 @@ export default {
     computed: {},
     //方法
     mounted() {
-        // this.handleSelect(this.defaultActive);
-        // console.log(this.menus)
+        this.windHeight = window.innerHeight;
+        this.windWidth = window.innerWidth;
     },
     methods: {
         handleSelect(key,keyPath) {
             console.log(key, keyPath)
+            if(this.windHeight > this.windWidth)
+                this.$emit('changeOpen')
             let currPage = this.$route.path;
             var to = keyPath[0]
             if (keyPath.length > 1) {

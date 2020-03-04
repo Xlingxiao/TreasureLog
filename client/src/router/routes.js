@@ -12,10 +12,10 @@ const routes = [
     }, {
         path: '/extend',
         component: () => import('../components/page/expend'),
+    },
+    {
+        path:'/log',
+        component:() => import('../components/page/log')
     }
-    // {
-    //     path:'/login',
-    //     component:Login
-    // }
 ]
 export default routes
