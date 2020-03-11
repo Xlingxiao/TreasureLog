@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>hello log</h1>
+        <h1>记录一笔</h1>
         <el-row class="el-row-wrap">
             <el-col :span="5" class="el-col-wrap">
                 <div class="colorItem">薪水</div>
@@ -171,7 +171,7 @@ export default {
                 }
             }
             let params = {
-                "userAccount":'2',
+                "userAccount": this.$store.state.userAccount,
                 "pay": this.pay,
                 "info": info,
                 "channel": channelList

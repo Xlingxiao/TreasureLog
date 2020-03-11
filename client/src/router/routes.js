@@ -14,7 +14,7 @@ const routes = [
         component: () => import('../components/page/expend'),
     },
     {
-        path:'/log',
+        path:'/log/*',
         component:() => import('../components/page/log')
     }
 ]

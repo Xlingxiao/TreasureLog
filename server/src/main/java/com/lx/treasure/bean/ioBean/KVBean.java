@@ -1,6 +1,7 @@
 package com.lx.treasure.bean.ioBean;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @Auther: Lx
@@ -8,8 +9,9 @@ import lombok.Data;
  * @Description: 存储最简单的K-V对象
  */
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class KVBean {
+public class KVBean extends BaseInvo{
 
     public KVBean(String key, String value) {
         this.key = key;
@@ -23,3 +25,4 @@ public class KVBean {
 
     private String value;
 }
+

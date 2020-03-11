@@ -106,7 +106,7 @@ export default {
     methods: {
         initExpends() {
             let params = {
-                userAccount: 1
+                userAccount: this.$store.state.userAccount
             };
             this.http
                 .getMainExpend(params)
@@ -118,8 +118,8 @@ export default {
                     let legendData = new Array();
                     res.forEach(item => {
                         // console.log(item.key, item.value);
-                        legendData.push(item.key)
-                        chartData.push({ name: item.key, value: item.value });
+                        legendData.push(item.info)
+                        chartData.push({ name: item.info, value: item.amount });
                     });
                     console.log(chartData);
                     this.option.title.text = this.title;

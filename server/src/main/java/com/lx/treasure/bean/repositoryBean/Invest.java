@@ -11,15 +11,18 @@ import java.util.Date;
  * @Date: 2020/2/27 22:25
  * @Description: 投资表
  */
-@Entity(name = "fund_info")
+@Entity(name = "invest")
 @Data
-public class Fund {
+public class Invest {
 
     @Id
     private long id;
 
     // 个人账号
     private long userAccount;
+
+    // 投资渠道
+    private String channel;
 
     // 投资
     private double invest;

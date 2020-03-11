@@ -23,7 +23,7 @@ export default {
     methods: {
         drawing() {
             let params = {
-                userAccount:"1"
+                userAccount: this.$store.state.userAccount
             }
             this.http.getLatestChannleData(params).then(res => {
                 let myChart = echarts.init(document.getElementById(this.chartID));

@@ -90,7 +90,7 @@ export default {
         // 默认画个旭日图
         defaultDrawing() {
             let params = {
-                userAccount: "1"
+                userAccount: this.$store.state.userAccount
             };
             this.http
                 .getLatestChannleData(params)

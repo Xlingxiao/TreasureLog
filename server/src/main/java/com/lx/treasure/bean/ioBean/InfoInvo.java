@@ -14,7 +14,7 @@ public class InfoInvo {
     private long userAccount;
     // 薪水
     private double pay;
-    // 描述
+    // 消费
     private String info;
     // 渠道
     private Map<String, Map<String, Double>> channels;

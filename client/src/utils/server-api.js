@@ -16,6 +16,7 @@ var serverApi = function() {
 
     // 发送post请求
 	this.post = function(url, data) {
+		url = "/treasureServer" + url
 		return new Promise(function(resolve, reject) {
 			axios.post(url, data, confing)
 				.then(res => {
@@ -48,7 +49,7 @@ var serverApi = function() {
 
 	// 获取投资信息
 	this.getInvestInfo = function(data) {
-		return this.post("/getFundInfoByUserAccount",data);
+		return this.post("/invest/index",data);
 	}
 
 	// 获取大笔支出信息
@@ -58,6 +59,16 @@ var serverApi = function() {
 	// 输入一条完整记录
 	this.addCompleteLog = function(data) {
 		return this.post("/insert/complete",data);
+	}
+
+	// 输入一条投资记录
+	this.addInvestLog = function(data) {
+		return this.post("/invest/onceLog",data)
+	}
+
+	// 记录一次消费
+	this.addExpendLog = function(data) {
+		return this.post("/expend/log",data)
 	}
     
 }

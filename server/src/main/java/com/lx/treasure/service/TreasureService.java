@@ -5,12 +5,9 @@ import com.lx.treasure.bean.common.CommonResponse;
 import com.lx.treasure.bean.common.SuccessResponse;
 import com.lx.treasure.bean.ioBean.*;
 import com.lx.treasure.bean.repositoryBean.Channel;
-import com.lx.treasure.bean.repositoryBean.Fund;
 import com.lx.treasure.bean.repositoryBean.Info;
-import com.lx.treasure.common.utils.DateUtils;
 import com.lx.treasure.common.utils.IdUtils;
 import com.lx.treasure.repository.ChannelRepository;
-import com.lx.treasure.repository.FundRepository;
 import com.lx.treasure.repository.InfoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -23,7 +20,7 @@ import java.util.*;
 
 @Service("ChannelService")
 @Slf4j
-public class ChannelService {
+public class TreasureService {
 
     @Resource
     private ChannelRepository channelRepository;
@@ -32,7 +29,8 @@ public class ChannelService {
     private InfoRepository infoRepository;
 
     @Resource
-    private FundRepository fundRepository;
+    private ExpendService expendService;
+
 
     @Autowired
     private IdUtils idUtils;
@@ -52,7 +50,7 @@ public class ChannelService {
      * @param infoInvo 前端输入的对象
      * @return 通用成功/失败对象
      */
-    public SuccessResponse getInfoHandler(InfoInvo infoInvo) {
+    public SuccessResponse getInfoHandler(InfoInvo infoInvo) throws CommonException {
         log.info("ChannelService 收到:" + infoInvo.toString());
         Map<String, Map<String, Double>> channels = infoInvo.getChannels();
         Info info = new Info();
@@ -64,6 +62,7 @@ public class ChannelService {
         long userAccount = StringUtils.isEmpty(infoInvo.getUserAccount()) ? 0 : infoInvo.getUserAccount();
         info.setUserAccount(userAccount);
         infoRepository.save(info);
+        expendService.addExpend(stringToExpendVoList(info.getInfo()));
         insertChannels(channels, id, userAccount);
         SuccessResponse response = new SuccessResponse();
         log.info("返回结果：" + response.toString());
@@ -145,31 +144,7 @@ public class ChannelService {
         return root;
     }
 
-    /**
-     * 根据userAccount和时间范围获取基金信息
-     *
-     * @param invo 个人账号和请求时间
-     * @return 基金信息
-     */
-    public InvestInfo getFundInfo(G002Invo invo) {
-        if (invo.getEndDate() == null) invo.setEndDate(new Date());
-        if (invo.getStartDate() == null) invo.setStartDate(new Date(0));
-        List<Fund> fundList = fundRepository.findFundByUserAccount(invo);
-        List<Double> grossList = new LinkedList<>();
-        List<Double> investList = new LinkedList<>();
-        List<Double> gainList = new LinkedList<>();
-        List<String> insertTimeList = new LinkedList<>();
-        fundList.forEach(fund -> {
-            double gross = fund.getGross();
-            double invest = fund.getInvest();
-            double gain = gross - invest;
-            grossList.add(gross);
-            investList.add(invest);
-            gainList.add(gain);
-            insertTimeList.add(DateUtils.dateToString(fund.getInsert_time()));
-        });
-        return new InvestInfo(invo.getUserAccount(), grossList, investList, gainList, insertTimeList);
-    }
+
 
     /**
      * 获取主要的支出信息
@@ -177,17 +152,26 @@ public class ChannelService {
      * @param userAccount 个人账号
      * @return 个人支出详细信息
      */
-    public List<KVBean> getMainExpendInfo(long userAccount) throws CommonException {
-        List<KVBean> expendInfo = new LinkedList<>();
+    public List<ExpendVo> getMainExpendInfo(long userAccount) throws CommonException {
         Info info = infoRepository.findUserLatest(userAccount);
-        String mainExpendStr = info.getInfo();
+        return stringToExpendVoList(info.getInfo());
+    }
+
+    /**
+     * 将String 解析为支出信息
+     * @param mainExpendStr 包含支出信息的String
+     * @return 支出信息
+     * @throws CommonException 普通
+     */
+    private List<ExpendVo> stringToExpendVoList(String mainExpendStr) throws CommonException {
+        List<ExpendVo> expendInfo = new LinkedList<>();
         try {
             String[] mainExpends = mainExpendStr.split("_,_");
             for (String mainExpend : mainExpends) {
                 String[] kv = mainExpend.split(":");
                 String key = kv[0];
                 String value = kv[1];
-                expendInfo.add(new KVBean(key, value));
+                expendInfo.add(new ExpendVo(key, Double.parseDouble(value)));
             }
         } catch (Exception e) {
             log.error(e.getMessage());

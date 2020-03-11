@@ -42,10 +42,22 @@
                     :index="secondMenu.index"
                 ><i class="el-icon-document"></i>{{secondMenu.name}}</el-menu-item>
             </el-submenu>-->
-            <el-menu-item v-for="(item,j) in menus" :index="item.index">
-                <i class="el-icon-document"></i>
-                {{item.name}}
-            </el-menu-item>
+            <div v-for="(item,i) in menus">
+                <el-submenu v-if="item.children && item.children.length > 0" :index="item.index">
+                    <template slot="title">
+                        <i class="el-icon-document"></i>
+                        {{item.name}}
+                    </template>
+                    <el-menu-item v-for="(item2,j) in item.children" :index="item2.index">
+                        <i :style="style.menus.i" class="el-icon-document"></i>
+                        {{item2.name}}
+                    </el-menu-item>
+                </el-submenu>
+                <el-menu-item v-else :index="item.index">
+                    <i class="el-icon-document"></i>
+                    {{item.name}}
+                </el-menu-item>
+            </div>
         </el-menu>
     </div>
 </template>
@@ -54,22 +66,13 @@
 export default {
     //参数
     props: {
-        defaultOpeneds: {
-            type: Array,
-            default() {
-                return [];
-            }
-        },
-        defaultActive: {
-            type: String
-        },
         backgroundColor: {
             type: String,
             default: "#fff"
         },
         textColor: {
             type: String,
-            default: "#303133"
+            default: "#fff"
         },
         uniqueOpened: {
             type: Boolean,
@@ -85,12 +88,6 @@ export default {
         router: {
             type: Boolean,
             default: false
-        },
-        menus: {
-            Array,
-            default() {
-                return [];
-            }
         },
         mode: {
             type: String,
@@ -117,33 +114,83 @@ export default {
                         "font-size": "22px",
                         color: "#fff"
                     }
+                },
+                menus: {
+                    i: {
+                        color: ""
+                    }
                 }
-            }
+            },
+            menus: [
+                {
+                    index: "/treasure",
+                    name: "财富分布情况"
+                },
+                {
+                    index: "/fund",
+                    name: "基金收益"
+                },
+                {
+                    index: "/extend",
+                    name: "支出明细"
+                },
+                {
+                    index: "/log",
+                    name: "记录一笔",
+                    children: [
+                        {
+                            index: "/log/complete",
+                            name: "完整记录"
+                        },
+                        {
+                            index: "/log/expend",
+                            name: "消费了"
+                        },
+                        {
+                            index: "/log/invest",
+                            name: "投资了"
+                        }
+                    ]
+                }
+            ],
+            defaultActive:"",
+            defaultOpeneds: [],
         };
     },
     //监听
-    watch: {},
+    watch: {
+        // $route() {
+        //     let path = this.$route.path;
+        //     console.log("path---", path);
+        //     this.defaultActive = path;
+        // }
+    },
     //计算
     computed: {},
     //方法
     mounted() {
+        let path = window.location.hash.replace("#","");
+        let routes = path.split("/");
+        let opends = routes.length > 1 ? routes[routes.length - 2] : "";
+        this.defaultActive = path;
+        this.defaultOpeneds = ["/"+ opends]
+        this.style.menus.i = this.textColor;
         this.windHeight = window.innerHeight;
         this.windWidth = window.innerWidth;
     },
     methods: {
-        handleSelect(key,keyPath) {
-            console.log(key, keyPath)
-            if(this.windHeight > this.windWidth)
-                this.$emit('changeOpen')
+        handleSelect(key, keyPath) {
+            console.log(key, keyPath);
+            if (this.windHeight > this.windWidth) this.$emit("changeOpen");
             let currPage = this.$route.path;
-            var to = keyPath[0]
+            var to = keyPath[0];
             if (keyPath.length > 1) {
-                to = keyPath[1]
+                to = keyPath[1];
             }
             if (to != currPage) {
                 this.$router.push({
                     path: to
-                })
+                });
             }
         }
     }
@@ -151,9 +198,14 @@ export default {
 </script>
 
 <style scoped>
+.el-submenu {
+    border-top: 1px solid rgb(187, 181, 181);
+}
+
 .el-menu-item {
     border-top: 1px solid rgb(187, 181, 181);
 }
+
 .lxMenu {
     text-align: left;
     background: #409eff;

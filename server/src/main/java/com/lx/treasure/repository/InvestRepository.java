@@ -1,8 +1,7 @@
 package com.lx.treasure.repository;
 
 import com.lx.treasure.bean.ioBean.G002Invo;
-import com.lx.treasure.bean.repositoryBean.Channel;
-import com.lx.treasure.bean.repositoryBean.Fund;
+import com.lx.treasure.bean.repositoryBean.Invest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,16 +17,16 @@ import java.util.List;
  * @Description: 获取基金相关
  */
 @Repository
-public interface FundRepository extends JpaRepository<Fund,Long> {
+public interface InvestRepository extends JpaRepository<Invest,Long> {
 
     /**
      * 获取基金信息
      */
     @Modifying
     @Transactional
-    @Query(value = "SELECT * FROM fund_info f " +
+    @Query(value = "SELECT * FROM invest f " +
             "where f.user_account = :#{#invo.userAccount} " +
             "and f.insert_time < :#{#invo.endDate} " +
             "and f.insert_time > :#{#invo.startDate} ",nativeQuery = true)
-    List<Fund> findFundByUserAccount(@Param("invo") G002Invo invo);
+    List<Invest> findFundByUserAccount(@Param("invo") G002Invo invo);
 }

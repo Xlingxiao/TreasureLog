@@ -28,7 +28,7 @@ export default {
         };
     },
     mounted() {
-        this.$store.commit("updateUserAccount", "1");
+        // this.$store.commit("updateUserAccount", "1");
         this.userAccount = this.$store.state.userAccount;
         this.initStage();
         this.drawing();
