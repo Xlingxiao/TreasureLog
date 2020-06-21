@@ -1,5 +1,6 @@
 package com.lx.treasure.bean.ioBean;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -10,10 +11,18 @@ import lombok.EqualsAndHashCode;
  */
 
 @EqualsAndHashCode(callSuper = true)
+@Builder
 @Data
 public class ExpendVo extends BaseInvo{
 
     public ExpendVo() {
+    }
+
+    public ExpendVo(String info, double amount, int essential, String detail) {
+        this.info = info;
+        this.amount = amount;
+        this.essential = essential;
+        this.detail = detail;
     }
 
     public ExpendVo(String info, double amount) {

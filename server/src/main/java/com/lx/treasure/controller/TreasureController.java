@@ -24,6 +24,16 @@ public class TreasureController {
     private TreasureService treasureService;
 
     /**
+     * 获取指定范围内的资产数据
+     * @param baseInvo baseInvo
+     * @return 指定范围内的资产数据
+     */
+    @PostMapping(value = "/getWealthCurve")
+    public String getWealthCurve(@RequestBody BaseInvo baseInvo) {
+        return treasureService.getWealthCurve(baseInvo);
+    }
+
+    /**
      * 接收前端发过来的数据
      * @param infoInvo 接收到的参数
      * @return 成功或失败的提示

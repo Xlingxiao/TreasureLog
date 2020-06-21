@@ -39,7 +39,8 @@ export default {
             },
             option: {},
             myChart: {},
-            min: 0
+            min: 0,
+            count: 0,
         };
     },
     watch: {
@@ -103,11 +104,16 @@ export default {
                     root.children.reverse();
                     console.log(root);
                     this.traverse(root);
+                    var title = "总资产：" + this.count;
                     this.option = {
-                        title: { text: "资金分布情况", left: "center", top: (this.min * 10) / 600 },
+                        title: { text: title, left: "center", top: (this.min * 10) / 600 },
+                        textStyle: {
+                            "fontSize": 15,
+                        },
                         series: {
                             type: "sunburst",
-                            center: ["50%", (this.min * 320) / 600],
+                            center: ["50%", (this.min * 320) / 700],
+                            
                             levels: [
                                 {},
                                 {
@@ -127,7 +133,7 @@ export default {
                                     label: {
                                         position: "outside",
                                         color: "#666",
-                                        size: "15px"
+                                        size: "95px"
                                     },
                                     downplay: {
                                         label: {
@@ -156,6 +162,7 @@ export default {
                     _this.traverse(children[i]);
                 }
             } else {
+                this.count += root.value;
                 if (root.value > 0)
                     root.children = [
                         {

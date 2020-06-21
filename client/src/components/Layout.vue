@@ -72,11 +72,21 @@ export default {
     },
     created() {
         this.init();
+    },
+    computed: {
+        windoWidth(){
+            return this.$store.state.winWidth;
         },
-    mounted() {
-        if(this.windWidth < this.windHeight){
-            this.isOpen = false
-            this.asideWidth = "100%"
+        windoHeight(){
+            return this.$store.state.winHeight;
+        }
+    },
+    watch:{
+        windoWidth(){
+            this.init();
+        },
+        windoHeight(){
+            this.init();
         }
     },
     methods: {
@@ -94,6 +104,13 @@ export default {
             }
             this.currentMenuName = "财富分布情况";
             console.log(this.windWidth, "---", this.windHeight);
+            if(this.windWidth < this.windHeight){
+                this.isOpen = false
+                this.asideWidth = "100%"
+            }else{
+                this.isOpen = true
+                this.asideWidth = "20%"
+            }
         },
         changeOpenStatus() {
             this.isOpen = !this.isOpen;

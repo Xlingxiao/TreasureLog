@@ -22,36 +22,58 @@ export default {
         return {
             style: {
                 box: {
-                    width: "200px",
-                    margin: "0 auto"
+                    width: "60%",
+                    margin: "0 auto",
+                    'min-width': '400px'
                 }
             },
             selectLog:"complete"
         };
     },
     watch: {
-        style(lod, value) {
-            let width = value.box.width;
-            console.log(width);
-        },
+
         $route(){
-        let path = this.$route.path.split("/");
-        if(path && path.length > 0)
-            this.selectLog = path[path.length - 1]
+            let path = this.$route.path.split("/");
+            if(path && path.length > 0)
+                this.selectLog = path[path.length - 1]
+        },
+        windoWidth() {
+            this.setWindow();
+        }
+    },
+    computed: {
+        windoWidth(){
+            return this.$store.state.winWidth;
         }
     },
     mounted() {
         
-        let height = window.innerHeight;
-        let width = window.innerWidth;
-        if(width > height)
-            this.style.box.width = "50%";
-        else 
-            this.style.box.height = "100%"
+        this.setWindow();
         let path = this.$route.path.split("/");
         if(path && path.length > 0)
             this.selectLog = path[path.length - 1]
     },
-    methods: {}
+    methods: {
+        // 屏幕自适应
+        setWindow(){
+            let height = window.innerHeight;
+            let width = window.innerWidth * 0.8;
+            let minWidth = width * 0.6;
+            let maxWidth = width * 0.9;
+            let maxSpan = maxWidth - minWidth;
+            if(width > height) {
+                let span = (maxSpan - (width - height)) * 100 / width;
+                let boxWidth = 60 + span; 
+                boxWidth = boxWidth < 60 ? 60 : boxWidth;
+                this.style.box.width = boxWidth + "%";
+            } else {
+                let span = (maxSpan - (maxWidth - minWidth)) * 100 / width;
+                let boxWidth = 90 - span; 
+                boxWidth = boxWidth > 90 ? 90 : boxWidth;
+                this.style.box.width = boxWidth + "%";
+            }
+            this.style.box.height = height;
+        },
+    }
 };
 </script>

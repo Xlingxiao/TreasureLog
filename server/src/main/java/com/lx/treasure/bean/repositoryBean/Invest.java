@@ -24,10 +24,10 @@ public class Invest {
     // 投资渠道
     private String channel;
 
-    // 投资
+    // 当前投资总额
     private double invest;
 
-    // 当前总额
+    // 当前渠道总资产= 投资额 + 利润
     private double gross;
 
     // 记录时间

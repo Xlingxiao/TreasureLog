@@ -49,12 +49,12 @@ var serverApi = function() {
 
 	// 获取投资信息
 	this.getInvestInfo = function(data) {
-		return this.post("/invest/index",data);
+		return this.post("/invest/getInfo",data);
 	}
 
 	// 获取大笔支出信息
 	this.getMainExpend = function(data) {
-		return this.post("/getMainExpend",data);
+		return this.post("/expend/getInfo",data);
 	}
 	// 输入一条完整记录
 	this.addCompleteLog = function(data) {
@@ -70,7 +70,15 @@ var serverApi = function() {
 	this.addExpendLog = function(data) {
 		return this.post("/expend/log",data)
 	}
-    
+	// 获取总资产走势
+	this.getWealthCurve = function(data) {
+		return this.post("/getWealthCurve",data)
+	}
+
+	// 获取每月消费走势
+    this.getExpendCurve = function(data) {
+		return this.post("/getExpentCurve",data)
+	}
 }
 
 export default serverApi

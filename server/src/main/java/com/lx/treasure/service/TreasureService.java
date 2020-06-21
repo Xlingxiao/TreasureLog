@@ -1,14 +1,19 @@
 package com.lx.treasure.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.lx.treasure.bean.common.CommonException;
 import com.lx.treasure.bean.common.CommonResponse;
 import com.lx.treasure.bean.common.SuccessResponse;
 import com.lx.treasure.bean.ioBean.*;
 import com.lx.treasure.bean.repositoryBean.Channel;
 import com.lx.treasure.bean.repositoryBean.Info;
+import com.lx.treasure.bean.repositoryBean.Invest;
 import com.lx.treasure.common.utils.IdUtils;
 import com.lx.treasure.repository.ChannelRepository;
+import com.lx.treasure.repository.ExpendRepository;
 import com.lx.treasure.repository.InfoRepository;
+import com.lx.treasure.repository.InvestRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +36,11 @@ public class TreasureService {
     @Resource
     private ExpendService expendService;
 
+    @Resource
+    private ExpendRepository expendRepository;
+
+    @Resource
+    private InvestRepository investRepository;
 
     @Autowired
     private IdUtils idUtils;
@@ -39,6 +49,33 @@ public class TreasureService {
     private SuccessResponse successResponse;
 
     // 处理前端发过来的一条数据
+
+    /**
+     * 获取指定范围内的资产数据
+     * @param baseInvo baseInvo
+     * @return 指定范围内的资产数据
+     */
+    public String getWealthCurve(BaseInvo baseInvo) {
+        if (StringUtils.isEmpty(baseInvo.getUserAccount())) {
+            return null;
+        }
+        List<Info> infoList = infoRepository.findInfoByUserAccount(baseInvo.getUserAccount(), baseInvo.getStartDate(), baseInvo.getEndDate());
+//        double profit1,profit2;
+//        List<Invest> investList = investRepository.findFundByUserAccount(baseInvo);
+//        if(infoList.size() > 2) {
+//            profit1 = investList.get(0).getGross() - investList.get(0).getInvest();
+//            profit2 = investList.get(1).getGross() - investList.get(1).getInvest();
+//        }
+        JSONArray result = new JSONArray();
+        for (Info info : infoList) {
+            JSONObject item = new JSONObject();
+            item.put("pay", info.getPay());
+            item.put("expend", info.getExpenditure());
+            item.put("date", info.getInsertTime());
+            result.add(item);
+        }
+        return result.toJSONString();
+    }
 
     /**
      * 1. 获取数据
@@ -154,7 +191,15 @@ public class TreasureService {
      */
     public List<ExpendVo> getMainExpendInfo(long userAccount) throws CommonException {
         Info info = infoRepository.findUserLatest(userAccount);
-        return stringToExpendVoList(info.getInfo());
+        Date lastLogDate = info.getInsertTime();
+        List<com.lx.treasure.bean.repositoryBean.Expend> expendList = expendRepository.findByUserAccount(userAccount,lastLogDate);
+        List<ExpendVo> expendVos = stringToExpendVoList(info.getInfo());
+        for (com.lx.treasure.bean.repositoryBean.Expend expend : expendList) {
+            ExpendVo expendVo = new ExpendVo();
+            BeanUtils.copyProperties(expend, expendVo);
+            expendVos.add(expendVo);
+        }
+        return expendVos;
     }
 
     /**
@@ -164,6 +209,9 @@ public class TreasureService {
      * @throws CommonException 普通
      */
     private List<ExpendVo> stringToExpendVoList(String mainExpendStr) throws CommonException {
+        if (StringUtils.isEmpty(mainExpendStr)) {
+            return null;
+        }
         List<ExpendVo> expendInfo = new LinkedList<>();
         try {
             String[] mainExpends = mainExpendStr.split("_,_");
@@ -192,6 +240,11 @@ public class TreasureService {
         infoRepository.save(info);
         List<Channel> channels = channelsInVoToChannelList(completeLog.getChannel(), completeLog.getUserAccount(), info.getId());
         channelRepository.saveAll(channels);
+        List<ExpendVo> expendVos = completeLog.getExpendList();
+        for (ExpendVo expendVo : expendVos) {
+            expendVo.setUserAccount(completeLog.getUserAccount());
+        }
+        expendService.addExpend(completeLog.getExpendList());
         SuccessResponse response = new SuccessResponse();
         log.info("返回结果：" + response.toString());
         return response;

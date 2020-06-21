@@ -1,16 +1,16 @@
 <template>
     <div class="hello">
-        <div :style="style.stage" :id="chartID"></div>
+        <stage :rowOption="chartOption" v-if="chartOption != {}"></stage>
     </div>
 </template>
 
 <script>
-import charts from "../charts/Charts";
+import stage from "../../charts/stage";
 import echarts from "echarts";
 export default {
     name: "treasure",
     components: {
-        charts
+        stage
     },
     props: {
         msg: String
@@ -21,10 +21,11 @@ export default {
             chartID: "DemoID",
             style: {
                 stage: {
-                    width: "90%",
-                    height: "500px"
+                    width: "100%"
+                    // height: "500px"
                 }
             },
+            chartOption:{},
         };
     },
     mounted() {
@@ -32,30 +33,42 @@ export default {
         this.userAccount = this.$store.state.userAccount;
         this.initStage();
         this.drawing();
+        // let _this = this;
+        // window.onresize = () => {
+        //     //调用methods中的事件
+        //     setTimeout(() => {
+        //         _this.updateCharts();
+        //     }, 400);
+        // };
     },
     methods: {
         initStage() {
             let windowHeight = window.innerHeight;
-            this.style.stage.height = windowHeight - 60 + "px";
-            // this.style.stage.width = this.style.stage.height;
+            this.style.stage.height = windowHeight - 90 + "px";
+            this.style.stage.width = window.innerWidth;
         },
         drawing() {
             let params = {
                 userAccount: this.$store.state.userAccount,
-                startDate: "2010-01-01",
-                endDate: new Date()
+                channel: "基金"
             };
             this.http
                 .getInvestInfo(params)
                 .then(res => {
-                    
-                    let myChart = echarts.init(
-                        document.getElementById(this.chartID)
-                    );
+                    // let myChart = echarts.init(
+                    //     document.getElementById(this.chartID)
+                    // );
                     let option = this.getOption();
+                    let profit = res.fundGain[res.fundGain.length - 1] * 1;
+                    if (profit > 0) {
+                        option.title.subtext = "当前投资盈利：" + profit;
+                    } else {
+                        option.title.subtext =
+                            "当前投资亏损：" + Math.abs(profit);
+                    }
                     let chartMode = this.getChartMode();
                     let itemStyle1 = {
-                        color: "#6c50f3",
+                        color: "#eecc66",
                         borderColor: "#fff",
                         borderWidth: 5,
                         shadowColor: "rgba(0, 0, 0, .3)",
@@ -119,7 +132,7 @@ export default {
                         }
                     };
                     let itemStyle3 = {
-                        color: "#eee",
+                        color: "#6c50f3",
                         borderColor: "#fff",
                         borderWidth: 5,
                         shadowColor: "rgba(0, 0, 0, .3)",
@@ -132,39 +145,46 @@ export default {
                     let grossData = new Array();
                     let investData = new Array();
                     let gainData = new Array();
-                    for(let i in dateData){
-                        grossData.push([dateData[i],res.fundGross[i]]);
-                        investData.push([dateData[i],res.fundInvest[i]])
-                        gainData.push([dateData[i],res.fundGain[i]])
+                    let totalGain = new Array();
+                    let grain = 0;
+                    for (let i in dateData) {
+                        grossData.push([dateData[i], res.fundGross[i]]);
+                        investData.push([dateData[i], res.fundInvest[i]]);
+                        gainData.push([dateData[i], res.fundGain[i]]);
+                        grain += res.fundGain[i];
+                        totalGain.push([dateData[i], grain]);
                     }
 
                     var chart1 = Object.assign({}, chartMode);
                     var chart2 = Object.assign({}, chartMode);
                     var chart3 = Object.assign({}, chartMode);
                     // var yAxis2 = Object.assign({},option.yAxis[0])
-                    option.yAxis.push({type:"value",splitLine:false,axisLine:false});
-                    chart3.yAxisIndex = 1;
+                    option.yAxis.push({
+                        type: "value",
+                        splitLine: false,
+                        axisLine: false
+                    });
 
+                    chart1["name"] = "总盈利";
+                    // chart1.areaStyle = areaStyle1;
                     chart1.itemStyle = itemStyle1;
-                    chart1.areaStyle = areaStyle1;
-                    chart1.data = grossData;
-                    console.log(chart1);
-                    console.log("chart1 name", chart1.name);
-
-                    chart1["name"] = "总额";
+                    chart1.data = totalGain;
+                    chart2["name"] = "投入";
                     chart2.itemStyle = itemStyle2;
                     chart2.areaStyle = areaStyle2;
                     chart2.data = investData;
-                    chart2["name"] = "投入";
+                    chart3.name = "盈利";
                     chart3.itemStyle = itemStyle3;
                     chart3.data = gainData;
-                    chart3.name = "盈利";
-                    option.series = [chart1, chart2, chart3];
-                    option.yAxis[0].max = Math.max.apply(null,res.fundGross) * 1.3
-                    option.yAxis[1].max = Math.max.apply(null,res.fundGain) * 3
-                    
-                    console.log(option);
-                    myChart.setOption(option);
+                    chart3.yAxisIndex = 1;
+                    option.series = [chart2, chart3, chart1];
+                    option.yAxis[0].max =
+                        Math.max.apply(null, res.fundGross) * 1.3;
+                    option.yAxis[1].max =
+                        Math.max.apply(null, res.fundGain) * 3;
+                    this.chartOption = option;
+                    // console.log(option);
+                    // myChart.setOption(option, true);
                 })
                 .catch(err => {
                     console.log(err);
@@ -172,13 +192,13 @@ export default {
         },
         getOption() {
             return {
-                backgroundColor: "#080b30",
+                backgroundColor: "#fff",
                 // 标题
                 title: {
                     text: "基金情况",
                     textStyle: {
                         align: "center",
-                        color: "#fff",
+                        color: "#080b30",
                         fontSize: 20
                     },
                     top: "5%",
@@ -222,7 +242,7 @@ export default {
                             }
                         },
                         axisLabel: {
-                            color: "#fff"
+                            color: "#6c50f3"
                         },
                         splitLine: {
                             show: false
@@ -235,7 +255,7 @@ export default {
                 yAxis: [
                     {
                         type: "value",
-                        min: 0,
+                        // min: 0,
                         // max: 140,
                         splitNumber: 4,
                         splitLine: {
@@ -259,6 +279,33 @@ export default {
                         }
                     }
                 ],
+                dataZoom: [
+                    {
+                        show: true,
+                        height: 12,
+                        xAxisIndex: [0],
+                        bottom: "8%",
+                        start: 0,
+                        end: 100,
+                        handleIcon:
+                            "path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z",
+                        handleSize: "110%",
+                        handleStyle: {
+                            color: "#d3dee5"
+                        },
+                        textStyle: {
+                            color: "#323a5e"
+                        },
+                        borderColor: "#90979c"
+                    },
+                    {
+                        type: "inside",
+                        show: true,
+                        height: 15,
+                        start: 1,
+                        end: 35
+                    }
+                ],
                 series: []
             };
         },
@@ -276,8 +323,12 @@ export default {
                     textStyle: {
                         color: "#00ca95"
                     }
-                },
-            }
+                }
+            };
+        },
+        updateCharts() {
+            let myChart = echarts.init(document.getElementById(this.chartID));
+            myChart.resize();
         }
     }
 };

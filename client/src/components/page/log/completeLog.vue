@@ -63,7 +63,7 @@
                         <span>{{ item }}</span>
                     </el-option>
                     <el-input
-                        @blur="addChannel"
+                        @blur="addChannel(channel)"
                         v-model="newChannel"
                         placeholder="新建财富渠道"
                         class="inputItem"
@@ -119,7 +119,7 @@ export default {
         
     },
     mounted() {
-        this.channles1.push("微信", "支付宝");
+        this.channles1.push("微信", "支付宝","银行卡","信用卡");
         this.channels.push({ channel1:"", name: "", value: 0 });
         this.mainExpends.push({ name: "", value: 0 });
     },
@@ -142,10 +142,11 @@ export default {
             
         },
         // 新增一个一级渠道
-        addChannel() {
+        addChannel(currentChannel) {
             let channel = this.newChannel;
             this.channles1.push(channel);
             this.newChannel = "";
+            currentChannel.channel1 = channel;
         },
         // 添加一个财富记录
         addOneChannel() {
@@ -154,10 +155,14 @@ export default {
         },
         // 整理请求参数
         submit() {
-            let info = "";
+            let expendList = [];
             this.mainExpends.forEach(element => {
-                if(element.name && element.value)
-                    info += element.name + ':' + element.value + '_,_';
+                let expendInfo = {};
+                if(element.name && element.value){
+                    expendInfo.info = element.name;
+                    expendInfo.amount = element.value;
+                }
+                expendList.push(expendInfo);
             });
             let channelList = new Array;
             for(let i in this.channels) {
@@ -173,13 +178,15 @@ export default {
             let params = {
                 "userAccount": this.$store.state.userAccount,
                 "pay": this.pay,
-                "info": info,
+                "expendList": expendList,
                 "channel": channelList
             }
             console.log(params)
             this.http.addCompleteLog(params).then(res => {
-                this.$message("记录成功！")
-            })
+                this.$alert("成功记录一次资金情况！")
+            }).catch(e=>{
+                this.$alert("记录失败请稍后重试！")
+            });
         }
     }
 };

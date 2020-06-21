@@ -25,7 +25,7 @@ const store =  new Vuex.Store({
             state.winWidth =
             document.documentElement.clientWidth;
             state.winHeight = document.documentElement.clientHeight;
-            console.log("窗口大小变为：",state.winHeight,"*",state.winWidth)
+            //sconsole.log("窗口大小变为：",state.winHeight,"*",state.winWidth)
         }
     },
     actions: {}

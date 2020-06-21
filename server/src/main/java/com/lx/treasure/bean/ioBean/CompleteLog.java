@@ -1,5 +1,6 @@
 package com.lx.treasure.bean.ioBean;
 
+import com.lx.treasure.bean.repositoryBean.Expend;
 import lombok.Data;
 
 import java.util.List;
@@ -20,7 +21,8 @@ public class CompleteLog {
     private double pay;
 
     // 主要消费信息
-    private String info;
+//    private String info;
+    private List<ExpendVo> expendList;
 
     // 财富分布
     private List<ChannelInVo> channel;

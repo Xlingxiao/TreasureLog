@@ -2,15 +2,17 @@ package com.lx.treasure.service;
 
 import com.lx.treasure.bean.common.CommonResponse;
 import com.lx.treasure.bean.common.SuccessResponse;
+import com.lx.treasure.bean.ioBean.BaseInvo;
 import com.lx.treasure.bean.ioBean.G002Invo;
 import com.lx.treasure.bean.ioBean.InvestInfo;
 import com.lx.treasure.bean.repositoryBean.Invest;
 import com.lx.treasure.common.utils.DateUtils;
 import com.lx.treasure.common.utils.IdUtils;
 import com.lx.treasure.repository.ChannelRepository;
-import com.lx.treasure.repository.InvestRepository;
 import com.lx.treasure.repository.InfoRepository;
+import com.lx.treasure.repository.InvestRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,11 +60,13 @@ public class InvestService {
 
     /**
      * 加载投资数据的时间
+     *
      * @param invests 需要存入的对象
      */
     private void loadInvest(List<Invest> invests) {
         Date date = new Date();
         for (Invest invest : invests) {
+            invest.setId(idUtils.generateId());
             if (invest.getInsert_time() == null) {
                 invest.setInsert_time(date);
             }
@@ -77,18 +81,18 @@ public class InvestService {
      * @return 基金信息
      */
     public InvestInfo getFundInfo(G002Invo invo) {
-        if (invo.getEndDate() == null) invo.setEndDate(new Date());
-        if (invo.getStartDate() == null) invo.setStartDate(new Date(0));
         List<Invest> fundList = investRepository.findFundByUserAccount(invo);
-        fundList.sort(Comparator.comparing(Invest::getInsert_time));
+//        fundList.sort(Comparator.comparing(Invest::getInsert_time));
         List<Double> grossList = new LinkedList<>();
         List<Double> investList = new LinkedList<>();
         List<Double> gainList = new LinkedList<>();
         List<String> insertTimeList = new LinkedList<>();
         fundList.forEach(fund -> {
             double gross = fund.getGross();
-            double invest = fund.getInvest();
-            double gain = gross - invest;
+            int i = investList.size() - 1;
+            double invest = i >= 0 ? fund.getInvest() + investList.get(i) : fund.getInvest();
+            invest = invest > 0 ? invest : 0;
+            double gain = i >= 0 ?  gross - (grossList.get(i) + fund.getInvest()) : gross - invest;
             grossList.add(gross);
             investList.add(invest);
             gainList.add(gain);

@@ -11,11 +11,7 @@ import java.util.Date;
  */
 
 @Data
-public class G002Invo {
-    // 个人账号
-    long userAccount;
-    // 开始时间
-    Date startDate;
-    // 结束时间
-    Date endDate;
+public class G002Invo extends BaseInvo {
+    // 查询渠道 股票/基金
+    String channel;
 }

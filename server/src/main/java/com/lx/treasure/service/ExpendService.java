@@ -3,14 +3,18 @@ package com.lx.treasure.service;
 import com.lx.treasure.bean.common.SuccessResponse;
 import com.lx.treasure.bean.ioBean.ExpendVo;
 import com.lx.treasure.bean.repositoryBean.Expend;
+import com.lx.treasure.bean.repositoryBean.Info;
 import com.lx.treasure.common.utils.IdUtils;
 import com.lx.treasure.repository.ExpendRepository;
+import com.lx.treasure.repository.InfoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,16 +38,27 @@ public class ExpendService {
     @Autowired
     private SuccessResponse successResponse;
 
+    @Autowired
+    InfoRepository infoRepository;
+
+
+
     /**
      * 获取消费数据
      *
-     * @param invo 前端输入的
+     * @param userAccount 前端输入的
+     * @param startDate 获取指定时间之后的数据
+     * @param endDate 获取指定时间之前的数据
      * @return 用户个人的消费数据
      */
-    public List<Expend> getExpendInfo(long userAccount) {
-        List<Expend> expendList = expendRepository.findByUserAccount(userAccount);
-        return expendList;
+    public List<Expend> getExpendInfo(long userAccount, Date startDate, Date endDate) {
+        if (StringUtils.isEmpty(userAccount)) {
+            return null;
+        }
+        return expendRepository.findByUserAccount(userAccount, startDate, endDate);
     }
+
+
 
     /**
      * 保存多条消费记录
@@ -64,7 +79,7 @@ public class ExpendService {
      * @return 成功标志
      */
     public SuccessResponse addExpend(ExpendVo expendVo) {
-        Expend expend = inVoToExpend(expendVo);
+        com.lx.treasure.bean.repositoryBean.Expend expend = inVoToExpend(expendVo);
         expendRepository.save(expend);
         return successResponse;
     }
@@ -78,8 +93,9 @@ public class ExpendService {
     private List<Expend> inVoToExpend(List<ExpendVo> expendVoList) {
         List<Expend> expendList = new LinkedList<>();
         for (ExpendVo expendVo : expendVoList) {
-            if(expendVo.getAmount() > 0)
+            if (expendVo.getAmount() > 0){
                 expendList.add(inVoToExpend(expendVo));
+            }
         }
         return expendList;
     }
@@ -94,6 +110,7 @@ public class ExpendService {
         Expend expend = new Expend();
         BeanUtils.copyProperties(expendVo, expend);
         expend.setInsertTime(new Date());
+        expend.setId(idUtils.generateId());
         return expend;
     }
 }

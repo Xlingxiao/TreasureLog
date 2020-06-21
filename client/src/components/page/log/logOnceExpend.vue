@@ -56,7 +56,7 @@ export default {
                 box: {
                     border: "0.5px solid #bbb",
                     "border-radius": "1%",
-                    padding: "5px",
+                    "padding": "5%",
                     "margin-bottom": "25px"
                 }
             },
@@ -108,7 +108,9 @@ export default {
                 expend.userAccount = this.$store.state.userAccount;
             });
             this.http.addExpendLog(list).then(res => {
-                console.log(res);
+                this.$alert("成功记录一次消费！")
+            }).catch(e=>{
+                this.$alert("记录失败请稍后重试！")
             });
         }
     }

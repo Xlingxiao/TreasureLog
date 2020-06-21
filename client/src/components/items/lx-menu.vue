@@ -127,8 +127,22 @@ export default {
                     name: "财富分布情况"
                 },
                 {
-                    index: "/fund",
-                    name: "基金收益"
+                    index: "/wealthCurve",
+                    name: "财富累积"
+                },
+                {
+                    index: "/invest",
+                    name: "投资",
+                    children: [
+                        {
+                            index: "/invest/fund",
+                            name: "基金"
+                        },
+                        {
+                            index: "/invest/stock",
+                            name: "股票"
+                        }
+                    ]
                 },
                 {
                     index: "/extend",

@@ -4,6 +4,7 @@ import com.lx.treasure.bean.repositoryBean.Expend;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,4 +18,13 @@ public interface ExpendRepository extends JpaRepository<Expend, Long> {
     @Query(value = "select * from expend a where user_account = ?1 ORDER BY a.insert_time",nativeQuery = true)
     List<Expend> findByUserAccount(long userAccount);
 
+    @Query(value = "select * from expend a where user_account = ?1 and a.insert_time > ?2 ORDER BY a.insert_time",nativeQuery = true)
+    List<Expend> findByUserAccount(long userAccount, Date date);
+
+    @Query(value = "select * from expend a " +
+            "where user_account = ?1 " +
+            "and if(IFNULL(?2,'') != '', a.insert_time > ?2, 1=1) " +
+            "and if(IFNULL(?3,'') != '', a.insert_time < ?3, 1=1) " +
+            "ORDER BY a.insert_time", nativeQuery = true)
+    List<Expend> findByUserAccount(long userAccount, Date startDate, Date endDate);
 }

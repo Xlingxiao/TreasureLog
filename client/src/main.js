@@ -79,10 +79,12 @@ import {
 	// CascaderPanel,
 	// Loading,
 	// MessageBox,
-	// Message,
-	avatar
+	Message,
+	avatar,
+	MessageBox
 	// Notification
 } from 'element-ui';
+
 
 Vue.use(Pagination);
 Vue.use(Dialog);
@@ -167,6 +169,9 @@ Vue.prototype.http = new serverApi()
 
 import echarts from 'echarts';
 Vue.prototype.$echarts = echarts;
+// 按需加载elementui 可能会出现用不了elementui提供的方法需要在这里进行注册
+Vue.prototype.$alert = MessageBox;
+Vue.prototype.$message = Message;
 
 import router from './router.js'
 

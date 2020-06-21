@@ -105,13 +105,20 @@ export default {
     },
     methods: {
         initExpends() {
+            let nowDate = new Date();
+            let startDate = this.getDateString(-1,'month',nowDate);
             let params = {
-                userAccount: this.$store.state.userAccount
+                userAccount: this.$store.state.userAccount,
+                startDate: startDate,
+                endDate: nowDate
             };
             this.http
                 .getMainExpend(params)
                 .then(res => {
-                    console.log(res);
+                    res.sort((a,b)=>{
+                        return a.amount - b.amount;
+                    })
+                    console.log("res-->",res);
                     this.title = "主要支出";
                     this.theme = "macarons";
                     let chartData = new Array();
@@ -134,6 +141,41 @@ export default {
                 .catch(err => {
                     console.log(err);
                 });
+        },
+        // 获取时间:yyyyMMdd
+        // 接收4个参数：
+        // 0. now
+        // 1. date x
+        // 2. month x
+        // 3. year x
+        // x 表示次数，例如五天前：(date,-5),一个月后：（month，1）
+        getDateString(count, unit, nowDate) {
+            // 获取当前时间毫秒数
+            unit = unit.toLowerCase();
+            nowDate = nowDate instanceof Date ? nowDate : new Date();
+            let date = nowDate.getDate();
+            let month = nowDate.getMonth();
+            let year = nowDate.getFullYear();
+            if (unit == 'date') {
+                let value = nowDate.valueOf();
+                let dayValue = 3600 * 24 * 1000; // 一天的毫秒数
+                let addMill = dayValue * count;
+                value += addMill;
+                let newDate = new Date(value);
+                return this.getDateString(0, '', newDate);
+            } else if (unit == 'month') {
+                month += count;
+                // 获取溢出的年数
+                let y = Math.floor(month / 12);
+                year += y;
+                month = month % 12;
+                month = month < 0 ? 12 + month : month;
+            } else if (unit == 'year') {
+                year += count < year ? count : 0;
+            }
+            date = date < 10 ? '0' + date : date;
+            month = month < 10 ? '0' + month : month;
+            return new Date(year,month,date);
         }
     }
 };

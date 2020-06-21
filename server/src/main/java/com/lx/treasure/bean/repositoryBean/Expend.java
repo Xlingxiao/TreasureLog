@@ -1,5 +1,6 @@
 package com.lx.treasure.bean.repositoryBean;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -11,9 +12,24 @@ import java.util.Date;
  * @Date: 2020/3/9 19:57
  * @Description: expend表
  */
+
 @Data
+@Builder
 @Entity(name = "expend")
 public class Expend {
+
+    public Expend() {
+    }
+
+    public Expend(long id, long userAccount, String info, double amount, int essential, String detail, Date insertTime) {
+        this.id = id;
+        this.userAccount = userAccount;
+        this.info = info;
+        this.amount = amount;
+        this.essential = essential;
+        this.detail = detail;
+        this.insertTime = insertTime;
+    }
 
     @Id
     private long id;

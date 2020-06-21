@@ -7,7 +7,24 @@
                     <p style="margin:0">投资渠道</p>
                 </el-col>
                 <el-col :span="19">
-                    <el-input @blur="fillterEmpty" placeholder="渠道" v-model="investItem.channel"></el-input>
+                    <!-- <el-input @blur="fillterEmpty" placeholder="渠道" v-model="investItem.channel"></el-input> -->
+                    <el-select style="width:100%" v-model="investItem.channel1" placeholder="渠道">
+                        <el-option
+                            v-for="item in channles1"
+                            :key="item"
+                            :label="item"
+                            :value="item"
+                        >
+                            <span>{{ item }}</span>
+                        </el-option>
+                        <el-input
+                            @blur="addChannel(investItem)"
+                            v-model="newChannel"
+                            placeholder="新建财富渠道"
+                            class="inputItem"
+                            clearable
+                        ></el-input>
+                    </el-select>
                 </el-col>
             </el-row>
             <el-row class="el-row-wrap">
@@ -15,7 +32,12 @@
                     <p style="margin:0">投入额</p>
                 </el-col>
                 <el-col :span="19">
-                <el-input @blur="fillterEmpty" type="number" placeholder="投资额" v-model="investItem.invest"></el-input>
+                    <el-input
+                        @blur="fillterEmpty"
+                        type="number"
+                        placeholder="投资额"
+                        v-model="investItem.invest"
+                    ></el-input>
                 </el-col>
             </el-row>
             <el-row class="el-row-wrap">
@@ -23,7 +45,12 @@
                     <p style="margin:0">当前总额</p>
                 </el-col>
                 <el-col :span="19">
-                <el-input @blur="fillterEmpty" type="number" placeholder="当前总额" v-model="investItem.gross"></el-input>
+                    <el-input
+                        @blur="fillterEmpty"
+                        type="number"
+                        placeholder="当前总额"
+                        v-model="investItem.gross"
+                    ></el-input>
                 </el-col>
             </el-row>
         </div>
@@ -46,15 +73,18 @@ export default {
                 box: {
                     border: "0.5px solid #bbb",
                     "border-radius": "1%",
-                    padding: "5px",
+                    padding: "5%",
                     "margin-bottom": "25px"
                 }
             },
             pay: "",
-            investList: []
+            investList: [],
+            channles1: new Array(),
+            newChannel: ""
         };
     },
     mounted() {
+        this.channles1.push("基金", "股票");
         this.investList = new Array();
         this.investList.push({
             channel: "",
@@ -63,6 +93,13 @@ export default {
         });
     },
     methods: {
+        // 新增一个一级渠道
+        addChannel(investItem) {
+            let channel = this.newChannel;
+            this.channles1.push(channel);
+            this.newChannel = "";
+            investItem.channel1 = channel;
+        },
         // 过滤为空的
         fillterEmpty() {
             // console.log(this.mainExpends);
@@ -85,9 +122,14 @@ export default {
             this.investList.forEach(invest => {
                 invest.userAccount = this.$store.state.userAccount;
             });
-            this.http.addInvestLog(this.investList).then(res => {
-                console.log(res);
-            });
+            this.http
+                .addInvestLog(this.investList)
+                .then(res => {
+                    this.$alert("成功记录一次理财情况！");
+                })
+                .catch(e => {
+                    this.$alert("记录失败请稍后重试！");
+                });
         }
     }
 };
