@@ -1,29 +1,32 @@
 <template>
-    <login v-if="isLogin"></login>
+    <router-view id="app"></router-view>
+    <!-- <login v-if="isLogin"></login>
     <div id="app" v-else>
         <layout></layout>
-    </div>
+    </div> -->
 </template>
 
 <script>
 import layout from "./components/Layout";
-import login from "./components/auth/login"
 export default {
     name: "App",
     components: {
         layout,
-        login,
     },
     data() {
-        return{
-            isLogin:false
+        return {
+            
+        };
+    },
+    created() {
+        this.http.initContext(this);
+        console.log(this.$route.path);
+        let token = localStorage.getItem('token');
+        if(!token) {
+            this.isLogin = true;
         }
     },
     mounted() {
-        console.log(this.$route.path);
-        if(this.$route.path == '/login'){
-            this.isLogin = true;
-        }
         var _this = this;
         window.onresize = function() {
             // 定义窗口大小变更通知事件

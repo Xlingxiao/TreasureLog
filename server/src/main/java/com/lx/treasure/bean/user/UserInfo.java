@@ -13,11 +13,22 @@ import javax.persistence.Table;
  * @Description: 用户对象
  */
 
-@Entity(name = "user")
-@Table(name = "user")
 @Builder
 @Data
+@Entity(name = "user")
+@Table(name = "user")
 public class UserInfo {
+
+    public UserInfo() {
+    }
+
+    public UserInfo(int id, String userAccount, String nickName, int userType, String password) {
+        this.id = id;
+        this.userAccount = userAccount;
+        this.nickName = nickName;
+        this.userType = userType;
+        this.password = password;
+    }
 
     @Id
     private int id;

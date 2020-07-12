@@ -9,6 +9,7 @@ const store =  new Vuex.Store({
         chartNum:1,
         winWidth:document.documentElement.clientWidth, //屏幕宽度
         winHeight:document.documentElement.clientHeight, //屏幕高度
+        currentUri:'',
     },
     mutations: {
         // 通过外界的新值来修改仓库中共享数据的值
@@ -17,7 +18,7 @@ const store =  new Vuex.Store({
         },
         // 更新chartID
         updateChartNum(state, num){
-            state.chartID = num;
+            state.chartNum = num;
 
         },
         // 更新窗口大小
@@ -26,6 +27,9 @@ const store =  new Vuex.Store({
             document.documentElement.clientWidth;
             state.winHeight = document.documentElement.clientHeight;
             //sconsole.log("窗口大小变为：",state.winHeight,"*",state.winWidth)
+        },
+        setCurrentUri(uri) {
+            state.currentUri = uri;
         }
     },
     actions: {}

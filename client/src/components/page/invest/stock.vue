@@ -1,16 +1,16 @@
 <template>
     <div class="hello">
-        <div :style="style.stage" :id="chartID"></div>
+        <stage :rowOption="chartOption" v-if="chartOption != {}"></stage>
     </div>
 </template>
 
 <script>
-import charts from "../../charts/Charts";
+import stage from "../../charts/stage";
 import echarts from "echarts";
 export default {
     name: "treasure",
     components: {
-        charts
+        stage
     },
     props: {
         msg: String
@@ -21,10 +21,11 @@ export default {
             chartID: "DemoID",
             style: {
                 stage: {
-                    width: "100%",
+                    width: "100%"
                     // height: "500px"
                 }
             },
+            chartOption:{},
         };
     },
     mounted() {
@@ -32,6 +33,13 @@ export default {
         this.userAccount = this.$store.state.userAccount;
         this.initStage();
         this.drawing();
+        // let _this = this;
+        // window.onresize = () => {
+        //     //调用methods中的事件
+        //     setTimeout(() => {
+        //         _this.updateCharts();
+        //     }, 400);
+        // };
     },
     methods: {
         initStage() {
@@ -42,21 +50,21 @@ export default {
         drawing() {
             let params = {
                 userAccount: this.$store.state.userAccount,
-                channel: '股票'
+                channel: "股票"
             };
             this.http
                 .getInvestInfo(params)
                 .then(res => {
-                    
-                    let myChart = echarts.init(
-                        document.getElementById(this.chartID)
-                    );
+                    // let myChart = echarts.init(
+                    //     document.getElementById(this.chartID)
+                    // );
                     let option = this.getOption();
                     let profit = res.fundGain[res.fundGain.length - 1] * 1;
-                    if( profit > 0) {
+                    if (profit > 0) {
                         option.title.subtext = "当前投资盈利：" + profit;
-                    }else {
-                        option.title.subtext = "当前投资亏损：" + Math.abs(profit);
+                    } else {
+                        option.title.subtext =
+                            "当前投资亏损：" + Math.abs(profit);
                     }
                     let chartMode = this.getChartMode();
                     let itemStyle1 = {
@@ -139,20 +147,23 @@ export default {
                     let gainData = new Array();
                     let totalGain = new Array();
                     let grain = 0;
-                    for(let i in dateData){
-                        grossData.push([dateData[i],res.fundGross[i]]);
-                        investData.push([dateData[i],res.fundInvest[i]])
-                        gainData.push([dateData[i],res.fundGain[i]])
+                    for (let i in dateData) {
+                        grossData.push([dateData[i], res.fundGross[i]]);
+                        investData.push([dateData[i], res.fundInvest[i]]);
+                        gainData.push([dateData[i], res.fundGain[i]]);
                         grain += res.fundGain[i];
-                        totalGain.push([dateData[i],grain])
+                        totalGain.push([dateData[i], grain]);
                     }
 
                     var chart1 = Object.assign({}, chartMode);
                     var chart2 = Object.assign({}, chartMode);
                     var chart3 = Object.assign({}, chartMode);
                     // var yAxis2 = Object.assign({},option.yAxis[0])
-                    option.yAxis.push({type:"value",splitLine:false,axisLine:false});
-
+                    option.yAxis.push({
+                        type: "value",
+                        splitLine: false,
+                        axisLine: false
+                    });
 
                     chart1["name"] = "总盈利";
                     // chart1.areaStyle = areaStyle1;
@@ -166,12 +177,14 @@ export default {
                     chart3.itemStyle = itemStyle3;
                     chart3.data = gainData;
                     chart3.yAxisIndex = 1;
-                    option.series = [chart2, chart3,chart1,];
-                    option.yAxis[0].max = Math.max.apply(null,res.fundGross) * 1.3
-                    option.yAxis[1].max = Math.max.apply(null,res.fundGain) * 3
-                    
-                    console.log(option);
-                    myChart.setOption(option);
+                    option.series = [chart2, chart3, chart1];
+                    option.yAxis[0].max =
+                        Math.max.apply(null, res.fundGross) * 1.3;
+                    option.yAxis[1].max =
+                        Math.max.apply(null, res.fundGain) * 3;
+                    this.chartOption = option;
+                    // console.log(option);
+                    // myChart.setOption(option, true);
                 })
                 .catch(err => {
                     console.log(err);
@@ -184,7 +197,7 @@ export default {
                 title: {
                     text: "股票情况",
                     textStyle: {
-                        align: "center",
+                        align: "left",
                         color: "#080b30",
                         fontSize: 20
                     },
@@ -193,7 +206,10 @@ export default {
                 },
                 // 获取焦点后的展示
                 tooltip: {
-                    trigger: "axis"
+                    trigger: "axis",
+                    textStyle: {
+                        align: "left"
+                    }
                 },
                 // 顶部工具栏
                 toolbox: {
@@ -310,15 +326,19 @@ export default {
                     textStyle: {
                         color: "#00ca95"
                     }
-                },
-            }
+                }
+            };
+        },
+        updateCharts() {
+            let myChart = echarts.init(document.getElementById(this.chartID));
+            myChart.resize();
         }
     }
 };
 </script>
 <style scoped>
 .hello * {
-    text-align: center;
+   
     margin: 0 auto;
 }
 </style>

@@ -45,3 +45,7 @@ lx:
     timeMillsPlaces: 41
     # 并发的位数
     concurrencePlaces: 8
+auth:
+  dontCheckToken: /register,/login
+  jwt:
+    key: Xq6SGWpwwEFbKlKeLcGvlaDzrlKGCaNVZVgIpHYpSz4=

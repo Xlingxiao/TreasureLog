@@ -16,7 +16,11 @@ export default {
             default() {
                 return undefined;
             }
-        }
+        },
+        // chartID: {
+        //     type:String,
+        //     default: "chart"
+        // }
     },
     data() {
         return {
@@ -36,8 +40,9 @@ export default {
     created() {
         this.initStage();
         let num = this.$store.state.chartNum;
-        this.$store.commit("updateChartNum", num++);
         this.chartID = "chart" + num;
+        num = num + 1;
+        this.$store.commit("updateChartNum", num);
     },
     mounted() {
         // 没有传东西过来默认展示资金状态

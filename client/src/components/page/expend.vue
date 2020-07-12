@@ -1,5 +1,5 @@
 <template>
-    <charts :rowOption="option" :theme="theme" :title="title"></charts>
+    <charts :rowOption="option" :title="title"></charts>
 </template>
 
 <script>
@@ -89,7 +89,6 @@ export default {
                 ]
             },
             title: "主要支出",
-            theme: "macarons",
             min: 0,
         };
     },
@@ -120,16 +119,17 @@ export default {
                     })
                     console.log("res-->",res);
                     this.title = "主要支出";
-                    this.theme = "macarons";
+                    let sumExpend = 0;
                     let chartData = new Array();
                     let legendData = new Array();
                     res.forEach(item => {
-                        // console.log(item.key, item.value);
-                        legendData.push(item.info)
+                        sumExpend += item.amount; 
+                        legendData.push(item.info);
                         chartData.push({ name: item.info, value: item.amount });
                     });
                     console.log(chartData);
                     this.option.title.text = this.title;
+                    this.option.title.subtext = '共计：' + sumExpend;
                     this.option.legend.data = legendData;
                     this.option.legend.y = this.min * 65/500;
                     this.option.series[0].radius = [this.min * 35/500,this.min * 135/500]

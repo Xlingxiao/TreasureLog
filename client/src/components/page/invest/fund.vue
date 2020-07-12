@@ -197,7 +197,7 @@ export default {
                 title: {
                     text: "基金情况",
                     textStyle: {
-                        align: "center",
+                        align: "left",
                         color: "#080b30",
                         fontSize: 20
                     },
@@ -206,7 +206,10 @@ export default {
                 },
                 // 获取焦点后的展示
                 tooltip: {
-                    trigger: "axis"
+                    trigger: "axis",
+                    textStyle: {
+                        align: "left"
+                    }
                 },
                 // 顶部工具栏
                 toolbox: {
@@ -335,7 +338,7 @@ export default {
 </script>
 <style scoped>
 .hello * {
-    text-align: center;
+   
     margin: 0 auto;
 }
 </style>

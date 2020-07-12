@@ -8,9 +8,9 @@
                 </el-col>
                 <el-col :span="19">
                     <!-- <el-input @blur="fillterEmpty" placeholder="渠道" v-model="investItem.channel"></el-input> -->
-                    <el-select style="width:100%" v-model="investItem.channel1" placeholder="渠道">
+                    <el-select style="width:100%" v-model="investItem.channel" placeholder="渠道">
                         <el-option
-                            v-for="item in channles1"
+                            v-for="item in channles"
                             :key="item"
                             :label="item"
                             :value="item"
@@ -79,12 +79,12 @@ export default {
             },
             pay: "",
             investList: [],
-            channles1: new Array(),
+            channles: new Array(),
             newChannel: ""
         };
     },
     mounted() {
-        this.channles1.push("基金", "股票");
+        this.channles.push("基金", "股票");
         this.investList = new Array();
         this.investList.push({
             channel: "",
@@ -96,9 +96,9 @@ export default {
         // 新增一个一级渠道
         addChannel(investItem) {
             let channel = this.newChannel;
-            this.channles1.push(channel);
+            this.channles.push(channel);
             this.newChannel = "";
-            investItem.channel1 = channel;
+            investItem.channel = channel;
         },
         // 过滤为空的
         fillterEmpty() {

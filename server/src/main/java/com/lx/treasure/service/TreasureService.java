@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.lx.treasure.bean.common.CommonException;
 import com.lx.treasure.bean.common.CommonResponse;
+import com.lx.treasure.bean.common.ContentText;
 import com.lx.treasure.bean.common.SuccessResponse;
 import com.lx.treasure.bean.ioBean.*;
 import com.lx.treasure.bean.repositoryBean.Channel;
@@ -142,7 +143,7 @@ public class TreasureService {
     public ChannelsInfo getUserLatestChannels(long userAccount) throws CommonException {
         List<Channel> channelList = channelRepository.findLatestByUserAccount(userAccount);
         if (channelList == null) {
-            throw new CommonException("400", "个人账号错误");
+            throw new CommonException(ContentText.USER_ACCOUNT_ERROR_CODE, ContentText.USER_ACCOUNT_ERROR);
         }
         log.info(channelList.toString());
         return packageChannelsInfo(channelList);
@@ -223,7 +224,7 @@ public class TreasureService {
             }
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new CommonException("500", "服务器内部错误");
+            throw new CommonException(ContentText.SERVER_ERROR_CODE, ContentText.SERVER_ERROR);
         }
         return expendInfo;
     }

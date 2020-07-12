@@ -1,18 +1,20 @@
 <template>
     <!-- 财富变化曲线 -->
     <div class="hello">
-        <div :style="style.stage" :id="chartID"></div>
-        <div :style="style.stage" :id="chartID2"></div>
+        <stage :rowOption="chartOption" v-if="chartOption != {}"></stage>
+        <stage :rowOption="chartOption2" v-if="chartOption2 != {}"></stage>
+        <!-- <div :style="style.stage" :id="chartID"></div>
+        <div :style="style.stage" :id="chartID2"></div> -->
     </div>
 </template>
 
 <script>
-import charts from "../charts/Charts";
+import stage from "../charts/stage";
 import echarts from "echarts";
 export default {
     name: "treasure",
     components: {
-        charts
+        stage
     },
     props: {
         msg: String
@@ -27,12 +29,14 @@ export default {
                     width: "100%"
                     // height: "500px"
                 }
-            }
+            },
+            chartOption: {},
+            chartOption2: {}
         };
     },
     mounted() {
         // this.$store.commit("updateUserAccount", "1");
-        this.userAccount = this.$store.state.userAccount;
+        // this.userAccount = this.$store.state.userAccount;
         this.initStage();
         this.drawing();
     },
@@ -44,16 +48,16 @@ export default {
         },
         drawing() {
             let params = {
-                userAccount: this.$store.state.userAccount,
+                // userAccount: this.$store.state.userAccount,
                 startDate: "2010-01-01",
                 endDate: new Date()
             };
             this.http
                 .getWealthCurve(params)
                 .then(res => {
-                    let myChart = echarts.init(
-                        document.getElementById(this.chartID)
-                    );
+                    // let myChart = echarts.init(
+                    //     document.getElementById(this.chartID)
+                    // );
                     let option = this.getOption();
                     let chartMode = this.getChartMode();
 
@@ -136,7 +140,8 @@ export default {
                     option.xAxis.data = logDate;
 
                     console.log(option);
-                    myChart.setOption(option);
+                    // myChart.setOption(option);
+                    this.chartOption = option;
                     this.showMonthWealthCurve(res,option);
 
                 })
@@ -147,9 +152,9 @@ export default {
         // 展示月消费额和收入
         showMonthWealthCurve(res,option) {
             let option2 = Object.assign({}, option);
-                    let myChart2 = echarts.init(
-                        document.getElementById(this.chartID2)
-                    );
+                    // let myChart2 = echarts.init(
+                    //     document.getElementById(this.chartID2)
+                    // );
                     let pays = new Array();
                     let expends = new Array();
                     let dateList = new Array();
@@ -174,7 +179,8 @@ export default {
                     option2.series[0]["data"] = expends;
                     option2.series[0]["name"] = "月消费";
                     option2.xAxis.data = dateList;
-                    myChart2.setOption(option2);
+                    // myChart2.setOption(option2);
+                    this.chartOption2 = option2;
         },
         getOption() {
             return {
@@ -194,6 +200,9 @@ export default {
                     axisPointer: {
                         // 坐标轴指示器，坐标轴触发有效
                         type: "shadow" // 默认为直线，可选为：'line' | 'shadow'
+                    },
+                    textStyle: {
+                        align: "left"
                     }
                 },
                 grid: {

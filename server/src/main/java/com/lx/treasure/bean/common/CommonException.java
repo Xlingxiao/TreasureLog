@@ -11,10 +11,10 @@ import lombok.EqualsAndHashCode;
 @Data
 public class CommonException extends Exception {
 
-    String resultCode;
+    int resultCode;
     String message;
 
-    public CommonException(String resultCode, String message) {
+    public CommonException(int resultCode, String message) {
         this.resultCode = resultCode;
         this.message = message;
     }

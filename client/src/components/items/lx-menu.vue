@@ -123,45 +123,45 @@ export default {
             },
             menus: [
                 {
-                    index: "/treasure",
+                    index: "/index/treasure",
                     name: "财富分布情况"
                 },
                 {
-                    index: "/wealthCurve",
+                    index: "/index/wealthCurve",
                     name: "财富累积"
                 },
                 {
-                    index: "/invest",
+                    index: "/index/invest",
                     name: "投资",
                     children: [
                         {
-                            index: "/invest/fund",
+                            index: "/index/invest/fund",
                             name: "基金"
                         },
                         {
-                            index: "/invest/stock",
+                            index: "/index/invest/stock",
                             name: "股票"
                         }
                     ]
                 },
                 {
-                    index: "/extend",
+                    index: "/index/extend",
                     name: "支出明细"
                 },
                 {
-                    index: "/log",
+                    index: "/index/log",
                     name: "记录一笔",
                     children: [
                         {
-                            index: "/log/complete",
+                            index: "/index/log/complete",
                             name: "完整记录"
                         },
                         {
-                            index: "/log/expend",
+                            index: "/index/log/expend",
                             name: "消费了"
                         },
                         {
-                            index: "/log/invest",
+                            index: "/index/log/invest",
                             name: "投资了"
                         }
                     ]
@@ -171,16 +171,6 @@ export default {
             defaultOpeneds: [],
         };
     },
-    //监听
-    watch: {
-        // $route() {
-        //     let path = this.$route.path;
-        //     console.log("path---", path);
-        //     this.defaultActive = path;
-        // }
-    },
-    //计算
-    computed: {},
     //方法
     mounted() {
         let path = window.location.hash.replace("#","");
@@ -201,6 +191,9 @@ export default {
             if (keyPath.length > 1) {
                 to = keyPath[1];
             }
+            // if(to.indexOf('index') == -1) {
+            //     to = 'index/' + to;
+            // }
             if (to != currPage) {
                 this.$router.push({
                     path: to

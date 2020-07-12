@@ -15,13 +15,8 @@
             <el-header>
                 <span>{{title}}</span>
             </el-header>
-        <i @click="changeOpenStatus" :class="style.switchIcon" :style="style.switch"></i>
+            <i @click="changeOpenStatus" :class="style.switchIcon" :style="style.switch"></i>
             <el-main class="el-main">
-                <!-- <img alt="Vue logo" src="../assets/logo.png" />
-                <HelloWorld msg="Welcome to Your Vue.js App" />-->
-                <!-- <DemoChart msg='示例图表'/> -->
-                <!-- <DemoChartDataFromServer msg="示例图表：数据来自服务器" /> -->
-                <!-- <Charts :msg="currentMenuName" /> -->
                 <router-view></router-view>
             </el-main>
         </el-container>
@@ -29,9 +24,6 @@
 </template>
 
 <script>
-import HelloWorld from "./Demo/HelloWorld.vue";
-import DemoChart from "./Demo/DemoChart";
-import DemoChartDataFromServer from "./Demo/DemoChartDataFromServer";
 import Charts from "./charts/Charts";
 
 import lxMenu from "./items/lx-menu";
@@ -39,9 +31,6 @@ import lxMenu from "./items/lx-menu";
 export default {
     components: {
         lxMenu,
-        DemoChartDataFromServer,
-        DemoChart,
-        HelloWorld,
         Charts
     },
     data() {
@@ -56,7 +45,10 @@ export default {
                     height: "20px",
                     width: "20px",
                     "font-size": "20px",
-                    "background": "rgba(128,128,128,0.15)"
+                    background: "rgba(128,128,128,0.15)",
+                    position: "absolute",
+                    top: "60px",
+                    "z-index": "999"
                 },
                 switchIcon: "el-icon-arrow-left"
             },
@@ -74,18 +66,18 @@ export default {
         this.init();
     },
     computed: {
-        windoWidth(){
+        windoWidth() {
             return this.$store.state.winWidth;
         },
-        windoHeight(){
+        windoHeight() {
             return this.$store.state.winHeight;
         }
     },
-    watch:{
-        windoWidth(){
+    watch: {
+        windoWidth() {
             this.init();
         },
-        windoHeight(){
+        windoHeight() {
             this.init();
         }
     },
@@ -104,21 +96,19 @@ export default {
             }
             this.currentMenuName = "财富分布情况";
             console.log(this.windWidth, "---", this.windHeight);
-            if(this.windWidth < this.windHeight){
-                this.isOpen = false
-                this.asideWidth = "100%"
-            }else{
-                this.isOpen = true
-                this.asideWidth = "20%"
+            if (this.windWidth < this.windHeight) {
+                this.isOpen = false;
+                this.asideWidth = "100%";
+            } else {
+                this.isOpen = true;
+                this.asideWidth = "20%";
             }
         },
         changeOpenStatus() {
             this.isOpen = !this.isOpen;
-            if(this.isOpen)
-                this.style.switchIcon = "el-icon-arrow-left"
-            else
-                this.style.switchIcon = "el-icon-arrow-right"
-            console.log("Switch Status",this.isOpen)
+            if (this.isOpen) this.style.switchIcon = "el-icon-arrow-left";
+            else this.style.switchIcon = "el-icon-arrow-right";
+            console.log("Switch Status", this.isOpen);
         }
     }
 };

@@ -41,13 +41,13 @@ public class TreasureController {
     @PostMapping(value = "/insert/ordinary")
     public SuccessResponse insertInfo(@RequestBody InfoInvo infoInvo) throws CommonException {
         if (StringUtils.isEmpty(infoInvo.getPay())) {
-            throw  new CommonException("2", "pay不能为空");
+            throw  new CommonException(402, "pay不能为空");
         }
         if (StringUtils.isEmpty(infoInvo.getInfo())) {
-            throw  new CommonException("2", "info不能为空");
+            throw  new CommonException(402, "info不能为空");
         }
         if (StringUtils.isEmpty(infoInvo.getChannels())) {
-            throw  new CommonException("2", "channels不能为空");
+            throw  new CommonException(402, "channels不能为空");
         }
         return treasureService.getInfoHandler(infoInvo);
     }
