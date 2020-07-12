@@ -1,6 +1,6 @@
 <template>
     <div class="mainBox">
-        <el-form :model="user" ref="user" label-width="100px" class="demo-ruleForm formStyle">
+        <el-form :model="user" ref="user" label-width="100px" class="demo-ruleForm formStyle" @keyup.enter.native="submitCheck('user')">
             <span></span>
             <!-- <el-form-item
                 label="账号"
@@ -22,7 +22,7 @@
                 prop="password"
                 :rules="[{ required: true, message: '密码不能为空'}]"
             >
-                <el-input type="password" v-model.number="user.password" autocomplete="off"></el-input>
+                <el-input type="password" v-model.number="user.password" autocomplete="off" @keyup.enter.native="submitCheck('user')"></el-input>
             </el-form-item>
             <el-form-item label-width="0">
                 <div class="submit">
