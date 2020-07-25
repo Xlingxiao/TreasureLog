@@ -151,7 +151,9 @@ export default {
         },
         // 展示月消费额和收入
         showMonthWealthCurve(res,option) {
-            let option2 = Object.assign({}, option);
+            
+            let option2 = JSON.parse(JSON.stringify(option))
+            // let option2 = Object.assign({}, option);
                     // let myChart2 = echarts.init(
                     //     document.getElementById(this.chartID2)
                     // );

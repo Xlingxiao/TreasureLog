@@ -37,6 +37,7 @@ import java.util.Map;
 @WebFilter(urlPatterns = "/*",filterName = "loginFilter")
 public class LoginFilter implements Filter {
 
+
     // 不需要检查token的url
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     @Value("#{'${auth.dontCheckToken}'.replaceAll(' ','').split(',')}")

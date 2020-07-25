@@ -38,11 +38,11 @@ export default {
         };
     },
     created() {
-        this.initStage();
         let num = this.$store.state.chartNum;
         this.chartID = "chart" + num;
         num = num + 1;
         this.$store.commit("updateChartNum", num);
+        this.initStage();
     },
     mounted() {
         // 没有传东西过来默认展示资金状态
