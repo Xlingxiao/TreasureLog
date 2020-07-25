@@ -1,6 +1,12 @@
 <template>
-    <div class="mainBox">
-        <el-form :model="user" ref="user" label-width="100px" class="demo-ruleForm formStyle" @keyup.enter.native="submitCheck('user')">
+    <div class="mainBox" :style="logBoxStyle">
+        <el-form
+            :model="user"
+            ref="user"
+            label-width="100px"
+            class="demo-ruleForm formStyle"
+            @keyup.enter.native="submitCheck('user')"
+        >
             <span></span>
             <!-- <el-form-item
                 label="账号"
@@ -22,7 +28,12 @@
                 prop="password"
                 :rules="[{ required: true, message: '密码不能为空'}]"
             >
-                <el-input type="password" v-model.number="user.password" autocomplete="off" @keyup.enter.native="submitCheck('user')"></el-input>
+                <el-input
+                    type="password"
+                    v-model.number="user.password"
+                    autocomplete="off"
+                    @keyup.enter.native="submitCheck('user')"
+                ></el-input>
             </el-form-item>
             <el-form-item label-width="0">
                 <div class="submit">
@@ -38,11 +49,23 @@
 export default {
     data() {
         return {
+            logBoxStyle: {},
             user: {
                 account: "",
                 password: ""
             }
         };
+    },
+    mounted() {
+        let windowHeight = window.innerHeight;
+        let windowWidth = window.innerWidth;
+        if (windowHeight > windowWidth) {
+            this.logBoxStyle = {
+                width: "90%",
+                top: "30%",
+                left: "5%"
+            };
+        }
     },
     methods: {
         // 登录检查
@@ -74,7 +97,7 @@ export default {
     height: 300px;
     margin-top: -25%;
     position: absolute;
-    top:50%;
+    top: 50%;
     left: 25%;
     border: 0.5px solid #ccc;
     border-radius: 2%;

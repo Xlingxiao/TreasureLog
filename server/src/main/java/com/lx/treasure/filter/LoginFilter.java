@@ -1,5 +1,6 @@
 package com.lx.treasure.filter;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.lx.treasure.bean.common.CommonException;
@@ -114,7 +115,15 @@ public class LoginFilter implements Filter {
             requestParams.put("userAccount", tokenAccount);
             return requestParams.toJSONString();
         } catch (JSONException e) {
-            log.error("解析用户请求参数出错：{}", requestParamsStr);
+            try {
+                JSONArray requestArray = JSONArray.parseArray(requestParamsStr);
+                for (int i = 0; i < requestArray.size(); i++) {
+                    requestArray.getJSONObject(i).put("userAccount", tokenAccount);
+                }
+                return requestArray.toJSONString();
+            } catch (Exception ex) {
+                log.error("解析用户请求参数出错：{}", requestParamsStr);
+            }
         }
         return null;
     }
