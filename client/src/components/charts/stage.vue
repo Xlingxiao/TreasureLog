@@ -17,10 +17,10 @@ export default {
                 return undefined;
             }
         },
-        // chartID: {
-        //     type:String,
-        //     default: "chart"
-        // }
+        chartHeight: {
+            type: Number,
+            default: 0
+        }
     },
     data() {
         return {
@@ -68,6 +68,9 @@ export default {
     methods: {
         initStage() {
             let windowHeight = window.innerHeight;
+            if (this.chartHeight) {
+                windowHeight = this.chartHeight;
+            }
             let windowWidth = window.innerWidth;
             this.min = Math.min(windowHeight, windowWidth);
             this.style.stage.height = windowHeight * 0.9 + "px";

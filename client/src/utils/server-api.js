@@ -134,6 +134,11 @@ var serverApi = function() {
     this.getExpendCurve = function(data) {
 		return this.post("/getExpentCurve",data)
 	}
+
+	//获取支出收入信息
+	this.getSpendInfo = function(data) {
+		return this.post("/expend/getSpendInfo",data);
+	}
 }
 
 export default serverApi

@@ -1,9 +1,12 @@
 package com.lx.treasure.service;
 
 import com.lx.treasure.bean.common.SuccessResponse;
+import com.lx.treasure.bean.ioBean.BaseInvo;
 import com.lx.treasure.bean.ioBean.ExpendVo;
 import com.lx.treasure.bean.repositoryBean.Expend;
 import com.lx.treasure.bean.repositoryBean.Info;
+import com.lx.treasure.bean.repositoryBean.SpendInfo;
+import com.lx.treasure.common.utils.DateUtils;
 import com.lx.treasure.common.utils.IdUtils;
 import com.lx.treasure.repository.ExpendRepository;
 import com.lx.treasure.repository.InfoRepository;
@@ -14,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -29,6 +34,7 @@ import java.util.List;
 @Slf4j
 public class ExpendService {
 
+    private static DecimalFormat df = new DecimalFormat("#.00");
     @Resource
     private ExpendRepository expendRepository;
 
@@ -52,9 +58,7 @@ public class ExpendService {
      * @return 用户个人的消费数据
      */
     public List<Expend> getExpendInfo(long userAccount, Date startDate, Date endDate) {
-        if (StringUtils.isEmpty(userAccount)) {
-            return null;
-        }
+        if(userAccount == 0) return null;
         return expendRepository.findByUserAccount(userAccount, startDate, endDate);
     }
 
@@ -112,5 +116,67 @@ public class ExpendService {
         expend.setInsertTime(new Date());
         expend.setId(idUtils.generateId());
         return expend;
+    }
+
+    /**
+     * 获取支出收入信息
+     * @param baseInvo 基本输入
+     * @return 支出收入信息
+     */
+    public SpendInfo getSpendInfo(BaseInvo baseInvo) {
+        SpendInfo spendInfo = new SpendInfo();
+        loadMonthSpeedInfo(baseInvo, spendInfo);
+        loadYearSpeedInfo(baseInvo, spendInfo);
+        return spendInfo;
+    }
+
+    /**
+     * 加载 月消费金额 日均消费金额
+     *
+     * @param baseInvo 前端输入
+     * @param spendInfo 需要加载的返回对象
+     */
+    private void loadMonthSpeedInfo(BaseInvo baseInvo, SpendInfo spendInfo) {
+        List<Info> infos = infoRepository.findUserLatest(baseInvo.getUserAccount(), 2);
+        if (infos == null || infos.size() < 1) return;
+        Info lastInfo = infos.get(0);
+        double lastMonthPay = lastInfo.getPay();
+        double lastMonthSpend = lastInfo.getExpenditure();
+
+        if (infos.size() == 2) {
+            long logSpanTime = lastInfo.getInsertTime().getTime() - infos.get(1).getInsertTime().getTime();
+            int logSpanDay = (int) (logSpanTime / (60 * 60 * 24 * 1000));
+            double dailySpend = lastMonthPay / logSpanDay;
+            dailySpend = Double.parseDouble(df.format(dailySpend));
+            spendInfo.setDailySpend(dailySpend);
+        }
+        spendInfo.setMonthSpend(lastMonthSpend);
+        spendInfo.setMonthlyIncome(lastMonthPay);
+    }
+
+    /**
+     * 获取 年消费金额 年总收入
+     * @param baseInvo 前端输入
+     * @param spendInfo 需要加载的返回对象
+     */
+    private void loadYearSpeedInfo(BaseInvo baseInvo,SpendInfo spendInfo){
+        try {
+            Date currentYearDate = DateUtils.getCurrentYearFirstDate();
+            Date currentDate = new Date();
+            List<Info> infos = infoRepository.findInfoByUserAccount(baseInvo.getUserAccount(), currentYearDate, currentDate);
+            if (infos != null) {
+                double yearSpend = 0;
+                double annualIncome = 0;
+                for (Info info : infos) {
+                    yearSpend += info.getExpenditure();
+                    annualIncome += info.getPay();
+                }
+                spendInfo.setYearSpend(yearSpend);
+                spendInfo.setAnnualIncome(annualIncome);
+
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 }

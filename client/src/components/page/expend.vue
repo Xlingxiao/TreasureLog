@@ -1,4 +1,6 @@
 <template>
+
+    <!-- 主要支出展示 -->
     <charts :rowOption="option" :title="title"></charts>
 </template>
 

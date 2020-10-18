@@ -167,11 +167,17 @@ export default {
             let channelList = new Array;
             for(let i in this.channels) {
                 if(this.channels[i].channel1 && this.channels[i].name && this.channels[i].value) {
+                    let value = this.channels[i].value;
+                    let nagativeAsset = ['信用卡','花呗'];
+                    if(nagativeAsset.indexOf(this.channels[i].name) != -1 
+                    || nagativeAsset.indexOf(this.channels[i].channel1) != -1) {
+                        value = -Math.abs(value);
+                    }
                     let channel2 = {
                         "channel1": this.channels[i].channel1,
                         "channel2": this.channels[i].name,
-                        "value": this.channels[i].value
-                    };  
+                        "value": value
+                    };
                     channelList.push(channel2);
                 }
             }

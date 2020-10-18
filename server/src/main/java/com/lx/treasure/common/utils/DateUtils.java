@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -48,6 +49,15 @@ public class DateUtils {
 
     public static String longToString(long time) {
         return sdfSecond.format(new Date(time));
+    }
+
+    /**
+     *
+     * @return 获取今年第一天
+     */
+    public static Date getCurrentYearFirstDate() throws ParseException {
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        return stringToDate("" + year + "-01-01");
     }
 
     public static void main(String[] args) throws ParseException {

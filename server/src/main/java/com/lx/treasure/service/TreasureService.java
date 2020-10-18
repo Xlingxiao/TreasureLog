@@ -265,20 +265,31 @@ public class TreasureService {
         info.setInsertTime(new Date());
         info.setUpdateTime(new Date());
         info.setUserAccount(completeLog.getUserAccount());
-        info.setExpenditure(getExpend(completeLog.getUserAccount()));
+        info.setExpenditure(getExpend(completeLog));
         return info;
     }
 
     /**
-     * 获取用户上次记录到本次记录中途花费
+     * 获取两次记录之间的消费
+     * 1. 可以获取到当前总资产
+     * 2. 可以获取到记录间隔内的收入
+     * 3. 消费 = 总资产 + 收入 - 上次次记录的总资产
      */
-    private double getExpend(long user) {
-        double value = 0;
+    private double getExpend(CompleteLog completeLog) {
+        long user = completeLog.getUserAccount();
+        // 当前总资产
+        double totalAssets = 0;
+        double lastTotalAssets = 0;
+        List<ChannelInVo> currentChannels = completeLog.getChannel();
+        for (ChannelInVo currentChannel : currentChannels) {
+            totalAssets += currentChannel.getValue();
+        }
+        // 上次记录的总资产
         List<Channel> channelList = channelRepository.findLatestByUserAccount(user);
         for (Channel channel : channelList) {
-            value += channel.getMoney();
+            lastTotalAssets += channel.getMoney();
         }
-        return value;
+        return totalAssets - completeLog.getPay() - lastTotalAssets;
     }
 
     /**

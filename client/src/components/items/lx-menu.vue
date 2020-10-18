@@ -127,6 +127,10 @@ export default {
                     name: "财富分布情况"
                 },
                 {
+                    index: "/index/consumeInfo",
+                    name: "消费情况"
+                },
+                {
                     index: "/index/wealthCurve",
                     name: "财富累积"
                 },
@@ -146,7 +150,7 @@ export default {
                 },
                 {
                     index: "/index/extend",
-                    name: "支出明细"
+                    name: "主要支出"
                 },
                 {
                     index: "/index/log",

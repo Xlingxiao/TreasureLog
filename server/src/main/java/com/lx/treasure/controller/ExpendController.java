@@ -3,6 +3,7 @@ package com.lx.treasure.controller;
 import com.lx.treasure.bean.common.CommonResponse;
 import com.lx.treasure.bean.ioBean.BaseInvo;
 import com.lx.treasure.bean.ioBean.ExpendVo;
+import com.lx.treasure.bean.repositoryBean.SpendInfo;
 import com.lx.treasure.service.ExpendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,11 @@ public class ExpendController {
     @PostMapping("/log")
     public CommonResponse addExpend(@RequestBody List<ExpendVo> expendList) {
         return expendService.addExpend(expendList);
+    }
+
+    @PostMapping("/getSpendInfo")
+    public SpendInfo getSpendInfo(@RequestBody BaseInvo invo) {
+        return expendService.getSpendInfo(invo);
     }
 
 }

@@ -104,28 +104,34 @@ export default {
                             barBorderRadius: 11
                         }
                     };
-
+                    // 历史总资产
                     let totalAssetsData = new Array();
+                    // 历史总薪水
                     let totalPay = new Array();
                     let logDate = new Array();
                     res.sort((a, b) => {
                         return a.date - b.date;
                     });
                     let latestPay = 0;
+                    let latestAssets = 0;
                     for (let i in res) {
-                        if (i != 0) {
+                        if(i == 0) {
+                            latestPay = res[i].pay;
+                            latestAssets = latestPay + res[i].expend;
+                        }else {
                             latestPay += res[i].pay;
+                            latestAssets =res[i].pay + totalAssetsData[i - 1] + res[i].expend; 
                             console.log("历史薪水累计：", latestPay);
-                            // let cost = latestPay - res[i].expend;
-                            totalAssetsData.push(res[i].expend);
-                            totalPay.push(latestPay);
-                            logDate.push(
-                                this.dateFormat(
-                                    "YYYYmmdd",
-                                    new Date(res[i].date)
-                                )
-                            );
                         }
+
+                        totalAssetsData.push(latestAssets);
+                        totalPay.push(latestPay);
+                        logDate.push(
+                            this.dateFormat(
+                                "YYYYmmdd",
+                                new Date(res[i].date)
+                            )
+                        );
                     }
 
                     var chart1 = Object.assign({}, chartMode);
@@ -161,26 +167,15 @@ export default {
                     let expends = new Array();
                     let dateList = new Array();
                     for (let i in res) {
-                        let cost = 0;
-                        if (i != 0) {
-                            cost =
-                                res[i].pay + res[i - 1].expend - res[i].expend;
-                            expends.push(cost);
-                            pays.push(res[i].pay);
-                            dateList.push(
-                                this.dateFormat(
-                                    "YYYYmmdd",
-                                    new Date(res[i].date)
-                                )
-                            );
-                        }
+                        expends.push(Math.abs(res[i].expend));
+                        pays.push(res[i].pay);
                     }
                     option2.title['text'] = '月消费走势'
                     option2.series[1]["name"] = "月收入";
                     option2.series[1]["data"] = pays;
                     option2.series[0]["data"] = expends;
                     option2.series[0]["name"] = "月消费";
-                    option2.xAxis.data = dateList;
+                    // option2.xAxis.data = dateList;
                     // myChart2.setOption(option2);
                     this.chartOption2 = option2;
         },

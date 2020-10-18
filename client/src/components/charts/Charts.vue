@@ -112,7 +112,7 @@ export default {
                         },
                         series: {
                             type: "sunburst",
-                            center: ["50%", (this.min * 320) / 700],
+                            center: ["50%", (this.min * 380) / 700],
                             
                             levels: [
                                 {},

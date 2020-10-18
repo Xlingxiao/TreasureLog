@@ -23,6 +23,9 @@ const routes = [
                 path: 'invest/stock',
                 component:() => import('../components/page/invest/stock')
             },{
+                path: 'consumeInfo',
+                component: () => import('../components/page/consumeInfo'),
+            },{
                 path: 'extend',
                 component: () => import('../components/page/expend'),
             },{
