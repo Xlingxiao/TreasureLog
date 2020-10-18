@@ -65,10 +65,14 @@ export default {
     methods: {
         // 初始化空间
         initStage() {
+            let windowWidth = window.innerWidth;
             let windowHeight = window.innerHeight;
-            this.chartHeight = (windowHeight - 90) / 2
+            this.chartHeight = (windowHeight - 90) / 2;
+            if(window.innerHeight < window.innerWidth) {
+                windowWidth = windowWidth / 2;
+            }
+            this.style.stage.width = windowWidth + 'px';
             this.style.stage.height = this.chartHeight + "px";
-            this.style.stage.width = window.innerWidth / 2;
         },
         // 绘画图表
         drawing() {
@@ -93,12 +97,13 @@ export default {
                         // for(let i = 0; i < value.length; i++) {
                         //     maxValue += '0'
                         // }
-                        let radio = 0.5;
-                        if(chartName != '日均支出') {
+                        let radio = 0.7;
+                        let maxValue = 0;
+                        if(chartName == '日均支出') {
                              maxValue = (res.monthlyIncome * radio / 30).toFixed(0)
-                        } else if(chartName != '月支出') {
+                        } else if(chartName == '月支出') {
                              maxValue = (res.monthlyIncome * radio).toFixed(0)
-                        } else if(chartName != '本年总支出') {
+                        } else if(chartName == '本年总支出') {
                              maxValue = (res.annualIncome * radio).toFixed(0)
                         }
                         chartOption.series[0].max = maxValue;
