@@ -6,7 +6,7 @@ spring:
     drive-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://self.ali:3306/treasure_life?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=true
     username: treasure_user
-    password: 111111
+    password: treasure_user_8928
   jpa:
     properties:
       hibernate:
