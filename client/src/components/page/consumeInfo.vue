@@ -67,7 +67,7 @@ export default {
         initStage() {
             let windowWidth = window.innerWidth;
             let windowHeight = window.innerHeight;
-            this.chartHeight = (windowHeight - 90) / 2;
+            this.chartHeight = (windowHeight) / 2;
             if(window.innerHeight < window.innerWidth) {
                 windowWidth = windowWidth / 2;
             }
@@ -126,7 +126,7 @@ export default {
                         type: "gauge",
                         detail: {
                             formatter: "{value}%",
-                            offsetCenter: ["0", "70%"],
+                            offsetCenter: ["0", "60%"],
                             fontSize: 30
                         },
                         axisLine: {
@@ -143,7 +143,7 @@ export default {
                         },
                         title: {
                             offsetCenter: ["0", "40%"],
-                            fontSize: 25
+                            fontSize: 20
                         },
                         data: [
                             {
