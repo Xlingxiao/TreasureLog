@@ -1,6 +1,7 @@
 package com.lx.treasure.bean.ioBean;
 
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 import java.util.Date;
@@ -20,8 +21,10 @@ public class BaseInvo {
     // 个人账号
     private long userAccount;
     // 开始时间
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date startDate;
     // 结束时间
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date endDate;
     // 限制个数
     private int findLimit;
