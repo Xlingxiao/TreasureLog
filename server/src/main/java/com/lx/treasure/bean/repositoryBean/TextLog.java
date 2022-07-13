@@ -1,5 +1,6 @@
 package com.lx.treasure.bean.repositoryBean;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -28,8 +29,8 @@ public class TextLog {
     private String content;
 
     private String userAccount;
-
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date insertTime;
-
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 }

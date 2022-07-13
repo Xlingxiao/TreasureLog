@@ -169,6 +169,20 @@ export default {
                             name: "投资了"
                         }
                     ]
+                },
+                {
+                    index: "/index/text",
+                    name: "文字记录",
+                    children: [
+                        {
+                            index: "/index/text/main",
+                            name: "记录"
+                        },
+                        {
+                            index: "/index/text/show",
+                            name: "展示"
+                        }
+                    ]
                 }
             ],
             defaultActive:"",

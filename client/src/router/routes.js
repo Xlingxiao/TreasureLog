@@ -34,6 +34,12 @@ const routes = [
             },{
                 path: 'wealthCurve',
                 component: () => import('../components/page/wealthCurve'),
+            },{
+                path: 'text/main',
+                component: () => import('../components/page/text/main'),
+            },{
+                path: 'text/show',
+                component: () => import('../components/page/text/show'),
             },
         ]
     },{

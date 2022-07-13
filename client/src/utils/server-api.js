@@ -139,6 +139,16 @@ var serverApi = function() {
 	this.getSpendInfo = function(data) {
 		return this.post("/expend/getSpendInfo",data);
 	}
+
+	//获取文字记录
+	this.getTextInfo = function(data) {
+		return this.post("/text/getText",data);
+	}
+
+	//记录一条文字
+	this.addOneText = function(data) {
+		return this.post("/text/addOneText",data);
+	}
 }
 
 export default serverApi
