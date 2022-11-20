@@ -8,7 +8,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
  * @author LX2
  */
 @SpringBootApplication()
-@ServletComponentScan("com.lx.treasure.filter")
+@ServletComponentScan("com.lx.treasure.config.filter")
 public class TreasureLifeApplication {
 
 	public static void main(String[] args) {

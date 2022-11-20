@@ -36,9 +36,12 @@ export default {
       if (!this.content) {
         return;
       }
+      console.log(this.Crypto.getAesKey())
+      let encryptText = this.Crypto.encrypt(this.content);
+      console.log(encryptText);
       let data = {
         userAccount: this.$store.state.userAccount,
-        text: this.content,
+        text: encryptText
       };
       this.http
         .addOneText(data)
