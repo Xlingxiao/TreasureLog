@@ -1,13 +1,22 @@
 import CryptoJS from 'crypto-js'
 import JSEncrypt from 'jsencrypt'
 
+
+
+
 let defaultKey = "AAAAEmx4QERFU0tU";
 let defaultIv = "b3BlbnNzaC1rZXkt";
 
 export default {
+    guid() {
+        return 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 36 | 0
+            return r.toString(36);
+        });
+    },
     genAesKey(){
-        defaultIv = crypto.randomUUID().replaceAll("-","").substring(0,16);
-        defaultKey = crypto.randomUUID().replaceAll("-","").substring(0,16);
+        defaultIv = this.guid().substring(0,16);
+        defaultKey = this.guid().substring(0,16);
         let info = {
             key: this.encryptRSA(defaultKey),
             iv: this.encryptRSA(defaultIv)
@@ -25,7 +34,7 @@ export default {
 
         let keyStr = selfKey ? selfKey : defaultKey;
         let ivStr = selfIv ? selfIv : defaultIv;
-
+        
         let key = CryptoJS.enc.Utf8.parse(keyStr);
         let iv = CryptoJS.enc.Utf8.parse(ivStr);
         let str = CryptoJS.enc.Utf8.parse(word);

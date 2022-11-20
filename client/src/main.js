@@ -166,7 +166,7 @@ Vue.config.productionTip = false
 
 import serverApi from 'utils/server-api'
 Vue.prototype.http = new serverApi()
-import myCrypto from 'utils/crypto.js'
+import myCrypto from 'utils/treasureCrypto.js'
 Vue.prototype.Crypto = myCrypto
 
 import echarts from 'echarts';

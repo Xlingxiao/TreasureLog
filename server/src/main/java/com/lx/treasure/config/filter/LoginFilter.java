@@ -35,7 +35,7 @@ import java.util.Map;
 
 @Slf4j
 @Order(1)
-@WebFilter(urlPatterns = "/**",filterName = "loginFilter")
+@WebFilter(urlPatterns = "/*",filterName = "loginFilter")
 public class LoginFilter implements Filter {
 
 
