@@ -78,12 +78,15 @@ var serverApi = function() {
 
 	// 进行登录
 	this.login = function(user) {
+		let aesInfo = this.context.Crypto.genAesKey();
 		let params = {
 			"userAccount":user.account,
-			"password":user.password
+			"password":user.password,
+			"key": aesInfo.key,
+			"iv": aesInfo.iv
 		}
 		this.post("/login",params).then(res=>{
-			let token = res.Token;
+			let token = res.token;
 			config.headers.Authorization = token
 			localStorage.setItem('token', token);
 			this.showMessage("登录成功！")
@@ -148,6 +151,10 @@ var serverApi = function() {
 	//记录一条文字
 	this.addOneText = function(data) {
 		return this.post("/text/addOneText",data);
+	}
+
+	this.getKey = function(){
+		return ;
 	}
 }
 

@@ -1,6 +1,5 @@
 package com.lx.treasure.bean.ioBean;
 
-import com.lx.treasure.bean.repositoryBean.Expend;
 import lombok.Data;
 
 import java.util.List;
