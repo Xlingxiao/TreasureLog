@@ -1,6 +1,5 @@
 package com.lx.treasure.bean.ioBean;
 
-import com.lx.treasure.bean.repositoryBean.Channel;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
