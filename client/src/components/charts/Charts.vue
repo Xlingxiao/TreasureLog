@@ -26,6 +26,12 @@ export default {
         title: {
             type: String,
             default: "ChartID"
+        },
+        optionData: {
+            type: Object,
+            default() {
+                return {}
+            }
         }
     },
     data() {
@@ -51,6 +57,12 @@ export default {
                 this.updateMyChart();
             },
             deep: true
+        },
+        optionData: {
+            handler(value, old) {
+                console.log("update", value);
+                this.updateChartData();
+            }
         }
     },
     created() {
@@ -70,6 +82,7 @@ export default {
             let windowHeight = window.innerHeight;
             let windowWidth = window.innerWidth;
             this.min = Math.min(windowHeight, windowWidth);
+            this.top = windowHeight < windowWidth ? this.min:this.min * 1.5
             this.style.stage.height = windowHeight * 0.9 + "px";
             // this.style.stage.width = this.style.stage.height;
         },
@@ -88,6 +101,27 @@ export default {
             this.myChart.setOption(changedData);
             console.log(this.option);
         },
+        // 更新数据
+        updateChartData() {
+            this.myChart.hideLoading();
+            let changedData = this.optionData.channelStatus;
+            // let option = this.myChart.getOption();
+            // console.log(option);
+            // option.series[0].data = changedData.children;
+            // option.title[0].text = this.title;
+            // console.log(option);
+            // this.myChart.setOption(option);
+            let option = this.option;
+            console.log(option);
+            this.count = 0;
+            this.traverse(changedData);
+            option.title[0].text = "总资产：" + this.count;
+            let titleInfo = "收入" + this.optionData.pay + ' 消费：' + this.optionData.expenditure;
+            let title2 = { text: titleInfo, left: "center", top: (this.top * 30) / 600,textStyle:{color: '#666',fontWeight: 'lighter',fontSize:15}}
+            option.title[1] =title2;
+            option.series.data = changedData.children;
+            this.myChart.setOption(option);
+        },
         // 默认画个旭日图
         defaultDrawing() {
             let params = {
@@ -96,7 +130,7 @@ export default {
             this.http
                 .getLatestChannleData(params)
                 .then(res => {
-                    let myChart = echarts.init(
+                    this.myChart = echarts.init(
                         document.getElementById(this.chartID),
                         this.theme
                     );
@@ -106,27 +140,27 @@ export default {
                     this.traverse(root);
                     var title = "总资产：" + this.count;
                     this.option = {
-                        title: { text: title, left: "center", top: (this.min * 10) / 600 },
+                        title: [{ text: title, left: "center", top: (this.min * 10) / 600 },
+                        ],
                         textStyle: {
                             "fontSize": 15,
                         },
                         series: {
                             type: "sunburst",
-                            center: ["50%", (this.min * 380) / 700],
-                            
+                            center: ["50%", (this.top * 300) / 700],
                             levels: [
                                 {},
                                 {
                                     r0: 0,
-                                    r: (this.min * 8) / 60
+                                    r: (this.min * 7) / 60
                                 },
                                 {
-                                    r0: (this.min * 8) / 60,
-                                    r: (this.min * 18) / 60
+                                    r0: (this.min * 7) / 60,
+                                    r: (this.min * 14) / 60
                                 },
                                 {
-                                    r0: (this.min * 2) / 6,
-                                    r: (this.min * 205) / 600,
+                                    r0: (this.min * 1.8) / 6,
+                                    r: (this.min * 185) / 600,
                                     itemStyle: {
                                         shadowBlur: 80
                                     },
@@ -147,7 +181,7 @@ export default {
                     };
                     console.log(root);
                     console.log(this.option);
-                    myChart.setOption(this.option);
+                    this.myChart.setOption(this.option);
                 })
                 .catch(err => {
                     console.log(err);

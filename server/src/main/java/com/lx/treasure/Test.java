@@ -16,7 +16,11 @@ public class Test {
         List<A> stringList = Arrays.asList(strings);
         System.out.println(stringList);
         stringList.set(1, new A("AAA", 23423));
-        System.out.println(stringList);
+        System.out.println("select * from channel a where a.info_id IN(\n" +
+                "\tSELECT b.id from (\n" +
+                "\t\tSELECT c.id FROM info c where c.user_account = ?1 ORDER BY c.insert_time DESC LIMIT 1\n" +
+                "\t) b\n" +
+                ")");
 
     }
 
