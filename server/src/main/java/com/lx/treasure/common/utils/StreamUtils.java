@@ -12,7 +12,6 @@ import java.io.InputStreamReader;
  */
 public class StreamUtils {
 
-    private static StringBuilder sb = new StringBuilder();
     /**
      * stream 转 string
      * @param inputStream 输入流
@@ -20,9 +19,8 @@ public class StreamUtils {
      */
     public static String streamToString(InputStream inputStream) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder sb = new StringBuilder();
         String tmp;
-        if(sb.length() > 1)
-            sb.delete(0, sb.length());
         while ((tmp = br.readLine()) != null) {
             sb.append(tmp).append("\n");
         }

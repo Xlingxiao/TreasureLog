@@ -15,6 +15,7 @@ import com.lx.treasure.module.treasure.repository.ChannelRepository;
 import com.lx.treasure.module.treasure.repository.ExpendRepository;
 import com.lx.treasure.module.treasure.repository.InfoRepository;
 import com.lx.treasure.module.treasure.repository.InvestRepository;
+import com.lx.treasure.module.treasure.vo.TreasureStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,7 +144,7 @@ public class TreasureService {
     public ChannelsInfo getUserLatestChannels(long userAccount) throws CommonException {
         List<Channel> channelList = channelRepository.findLatestByUserAccount(userAccount);
         if (channelList == null) {
-            throw new CommonException(ContentText.USER_ACCOUNT_ERROR_CODE, ContentText.USER_ACCOUNT_ERROR);
+            return null;
         }
         log.info(channelList.toString());
         return packageChannelsInfo(channelList);
@@ -180,6 +181,37 @@ public class TreasureService {
         ChannelsInfo root = new ChannelsInfo("root", 0, new LinkedList<>());
         parentMap.forEach((key, value) -> root.getChildren().add(value));
         return root;
+    }
+
+    /**
+     * 获取用户的收支情况
+     * @param invo 用户信息
+     * @return 用户收支情况
+     */
+    public List<Info> getUserIncomeExpend(long userAccount) {
+        return infoRepository.findInfoByUserAccount(userAccount, null, null);
+    }
+
+
+    /**
+     * 获取用户最新的渠道信息
+     *
+     * @return 成功
+     */
+    public TreasureStatus getUserChannels(long userAccount, long infoId) {
+        Info info = infoRepository.findById(infoId);
+        List<Channel> channelList = channelRepository.queryChannels(userAccount, infoId);
+        if (channelList == null || channelList.isEmpty()) {
+            return null;
+        }
+        log.info(channelList.toString());
+        ChannelsInfo channelsInfo = packageChannelsInfo(channelList);
+        TreasureStatus treasureStatus = new TreasureStatus();
+        treasureStatus.setPay(info.getPay());
+        treasureStatus.setExpenditure(info.getExpenditure());
+        treasureStatus.setDate(info.getInsertTime());
+        treasureStatus.setChannelStatus(channelsInfo);
+        return treasureStatus;
     }
 
 

@@ -152,9 +152,38 @@ var serverApi = function() {
 	this.addOneText = function(data) {
 		return this.post("/text/addOneText",data);
 	}
-
-	this.getKey = function(){
-		return ;
+	// 获取历史收支明细
+	this.getIncomeInfoList = function(data){
+		return this.post("/getIncomeInfoList",data);
+	}
+	// 获取个人指定时间的所有财富渠道状态
+	this.getTreasureStatus = function(data){
+		return this.post("/getTreasureStatus",data);
+	}
+	// date对象格式化传入格式 (yyyymmdd,new Date())
+	this.dateFormat = function(fmt, date) {
+		let ret;
+		let opt = {
+			"Y+": date.getFullYear().toString(), // 年
+			"m+": (date.getMonth() + 1).toString(), // 月
+			"d+": date.getDate().toString(), // 日
+			"H+": date.getHours().toString(), // 时
+			"M+": date.getMinutes().toString(), // 分
+			"S+": date.getSeconds().toString() // 秒
+			// 有其他格式化字符需求可以继续添加，必须转化成字符串
+		};
+		for (let k in opt) {
+			ret = new RegExp("(" + k + ")").exec(fmt);
+			if (ret) {
+				fmt = fmt.replace(
+					ret[1],
+					ret[1].length == 1
+						? opt[k]
+						: opt[k].padStart(ret[1].length, "0")
+				);
+			}
+		}
+		return fmt;
 	}
 }
 

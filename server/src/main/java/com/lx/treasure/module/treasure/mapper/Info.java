@@ -1,5 +1,7 @@
 package com.lx.treasure.module.treasure.mapper;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -29,8 +31,10 @@ public class Info {
     // 消费介绍
     private String info;
     // 插入时间
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date insertTime;
     // 更新时间
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date updateTime;
 
 }
