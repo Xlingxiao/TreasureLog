@@ -8,6 +8,8 @@ import com.lx.treasure.bean.ioBean.*;
 import com.lx.treasure.module.treasure.mapper.Channel;
 import com.lx.treasure.module.treasure.mapper.Info;
 import com.lx.treasure.module.treasure.service.TreasureService;
+import com.lx.treasure.module.treasure.vo.InfoVo;
+import com.lx.treasure.module.treasure.vo.TreasureStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -75,6 +77,30 @@ public class TreasureController {
     public List<ExpendVo> getMainExpend(@RequestBody BaseInvo invo) throws CommonException {
         long userAccount = invo.getUserAccount();
         return treasureService.getMainExpendInfo(userAccount);
+    }
+
+
+    /**
+     * 获取账户所有收支记录
+     * @param invo 个人账号
+     * @return 账户所有收支记录
+     */
+    @PostMapping("/getIncomeInfoList")
+    public List<Info> getInfoList(@RequestBody BaseInvo invo) {
+        long userAccount = invo.getUserAccount();
+        return treasureService.getUserIncomeExpend(userAccount);
+    }
+
+    /**
+     * 获取个人指定时间的所有财富渠道状态
+     * @param invo 个人账号 info id
+     * @return 个人指定时间的所有财富渠道状态
+     */
+    @PostMapping("/getTreasureStatus")
+    public TreasureStatus getTreasureStatus(@RequestBody InfoVo invo) {
+        long userAccount = invo.getUserAccount();
+        long infoId = invo.getInfoId();
+        return treasureService.getUserChannels(userAccount, infoId);
     }
 
 

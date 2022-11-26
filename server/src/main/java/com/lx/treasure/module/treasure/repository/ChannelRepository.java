@@ -29,6 +29,10 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
             ")",nativeQuery = true)
     List<Channel> findLatestByUserAccount(long userAccount);
 
+
+    @Query(value = "select * from channel a where user_account = ?1 and info_id = ?2 ",nativeQuery = true)
+    List<Channel> queryChannels(long userAccount, long infoId);
+
     // 测试用，通过id找数据
     Channel findById(long id);
 
