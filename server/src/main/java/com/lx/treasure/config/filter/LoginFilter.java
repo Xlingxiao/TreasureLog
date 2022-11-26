@@ -122,10 +122,13 @@ public class LoginFilter implements Filter {
                 }
                 return requestArray.toJSONString();
             } catch (Exception ex) {
-                log.error("解析用户请求参数出错：{}", requestParamsStr);
+                JSONObject request = new JSONObject();
+                request.put("userAccount", tokenAccount);
+                request.put("requestContent", requestParamsStr);
+                return request.toJSONString();
+                // log.error("解析用户请求参数出错：{}", requestParamsStr);
             }
         }
-        return null;
     }
 
 
