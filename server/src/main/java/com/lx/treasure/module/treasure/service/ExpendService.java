@@ -144,7 +144,7 @@ public class ExpendService {
         if (infos.size() == 2) {
             long logSpanTime = lastInfo.getInsertTime().getTime() - infos.get(1).getInsertTime().getTime();
             int logSpanDay = (int) (logSpanTime / (60 * 60 * 24 * 1000));
-            double dailySpend = lastMonthPay / logSpanDay;
+            double dailySpend = lastMonthSpend / logSpanDay;
             dailySpend = Double.parseDouble(df.format(dailySpend));
             spendInfo.setDailySpend(dailySpend);
         }
