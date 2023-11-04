@@ -1,6 +1,7 @@
 package com.lx.treasure.module.treasure.repository;
 
 import com.lx.treasure.module.treasure.mapper.Channel;
+import com.lx.treasure.module.treasure.mapper.TreasureClassInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

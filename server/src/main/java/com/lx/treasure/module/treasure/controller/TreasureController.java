@@ -9,6 +9,7 @@ import com.lx.treasure.module.treasure.mapper.Channel;
 import com.lx.treasure.module.treasure.mapper.Info;
 import com.lx.treasure.module.treasure.service.TreasureService;
 import com.lx.treasure.module.treasure.vo.InfoVo;
+import com.lx.treasure.module.treasure.vo.TreasureClassInfoVo;
 import com.lx.treasure.module.treasure.vo.TreasureStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -104,6 +105,11 @@ public class TreasureController {
     }
 
 
+    @PostMapping("/getTreasureClassInfo")
+    public List<TreasureClassInfoVo> getTreasureClassInfo(@RequestBody InfoVo infoVo) {
+        long userAccount = infoVo.getUserAccount();
+        return treasureService.getTreasureClassInfo(userAccount);
+    }
 
     @PostMapping(value = "/insert/complete")
     public CommonResponse addCompleteLog(@RequestBody CompleteLog log){

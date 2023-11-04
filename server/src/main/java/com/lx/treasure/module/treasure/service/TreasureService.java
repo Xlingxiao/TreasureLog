@@ -7,14 +7,17 @@ import com.lx.treasure.bean.common.CommonResponse;
 import com.lx.treasure.bean.common.ContentText;
 import com.lx.treasure.bean.common.SuccessResponse;
 import com.lx.treasure.bean.ioBean.*;
+import com.lx.treasure.mapper.TreasureClassMapper;
 import com.lx.treasure.module.treasure.mapper.Channel;
 import com.lx.treasure.module.treasure.mapper.Info;
 import com.lx.treasure.common.utils.IdUtils;
 import com.lx.treasure.module.treasure.mapper.Expend;
+import com.lx.treasure.module.treasure.mapper.TreasureClassInfo;
 import com.lx.treasure.module.treasure.repository.ChannelRepository;
 import com.lx.treasure.module.treasure.repository.ExpendRepository;
 import com.lx.treasure.module.treasure.repository.InfoRepository;
 import com.lx.treasure.module.treasure.repository.InvestRepository;
+import com.lx.treasure.module.treasure.vo.TreasureClassInfoVo;
 import com.lx.treasure.module.treasure.vo.TreasureStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -43,6 +46,8 @@ public class TreasureService {
 
     @Resource
     private InvestRepository investRepository;
+    @Autowired
+    private TreasureClassMapper treasureClassMapper;
 
     @Autowired
     private IdUtils idUtils;
@@ -322,6 +327,23 @@ public class TreasureService {
             lastTotalAssets += channel.getMoney();
         }
         return totalAssets - completeLog.getPay() - lastTotalAssets;
+    }
+
+    /**
+     * 获取汇总的状态信息
+     * 垃圾代码，无法将父类强转子类
+     * @param userAccount 用户信息
+     * @return 汇总的资产信息
+     */
+    public List<TreasureClassInfoVo> getTreasureClassInfo(long userAccount) {
+        List<TreasureClassInfo> treasureClassInfo = treasureClassMapper.getTreasureClassInfo(userAccount);
+        ArrayList<TreasureClassInfoVo> result = new ArrayList<>(treasureClassInfo.size());
+        for (TreasureClassInfo classInfo : treasureClassInfo) {
+            TreasureClassInfoVo item = new TreasureClassInfoVo();
+            BeanUtils.copyProperties(classInfo, item);
+            result.add(item);
+        }
+        return result;
     }
 
     /**

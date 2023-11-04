@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lx.treasure.mapper.TreasureClassMapper" >
+
+    <resultMap id="TreasureClassInfo" type="com.lx.treasure.module.treasure.mapper.TreasureClassInfo" >
+        <result column="date" property="date" jdbcType="VARCHAR" />
+        <result column="user_account" property="userAccount" jdbcType="VARCHAR" />
+        <result column="pay" property="pay" jdbcType="VARCHAR" />
+        <result column="expenditure" property="expenditure" jdbcType="VARCHAR" />
+        <result column="money" property="money" jdbcType="VARCHAR" />
+        <result column="invest" property="invest" jdbcType="VARCHAR" />
+        <result column="debt" property="debt" jdbcType="VARCHAR" />
+        <result column="total" property="total" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, content, status, topic, user_name, create_time, modify_time
+    </sql>
+
+    <select id="getTreasureClassInfo" resultMap="TreasureClassInfo" parameterType="java.lang.Long" >
+        select i.id,i.date date,i.user_account, i.pay, i.expenditure
+            ,c.money,c.invest,c.debt, c.money + c.invest + c.debt total
+        from `info` i left join (
+            SELECT c.info_id
+            ,sum(if(c.channel1 like '%银行卡%' or c.channel2 like '%余额%' , c.money, 0)) money
+            ,sum(if(c.channel1 like '%理财%' or c.channel2 like '%理财%' or c.channel2 like '%基金%' or c.channel2 like '%帮你%', c.money, 0)) invest
+            ,sum(if(c.channel1 like '信用卡' or c.channel2 like '花呗', c.money,0)) debt
+            from channel c
+            group by DATE_FORMAT(c.insert_time,'%Y-%m-%d'), c.user_account,c.info_id
+            ) c on i.id = c.info_id
+        where i.user_account = #{userAccount,jdbcType=BIGINT}
+        order by i.date desc
+    </select>
+
+</mapper>
