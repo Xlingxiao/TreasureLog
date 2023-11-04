@@ -3,6 +3,7 @@
 <mapper namespace="com.lx.treasure.mapper.TreasureClassMapper" >
 
     <resultMap id="TreasureClassInfo" type="com.lx.treasure.module.treasure.mapper.TreasureClassInfo" >
+        <result column="id" property="infoId" jdbcType="BIGINT" />
         <result column="date" property="date" jdbcType="VARCHAR" />
         <result column="user_account" property="userAccount" jdbcType="VARCHAR" />
         <result column="pay" property="pay" jdbcType="VARCHAR" />

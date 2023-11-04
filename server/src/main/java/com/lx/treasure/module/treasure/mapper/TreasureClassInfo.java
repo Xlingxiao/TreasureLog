@@ -7,6 +7,8 @@ import lombok.Data;
 @Data
 public class TreasureClassInfo {
 
+    /** info id */
+    long infoId;
     /** 账号 */
     String userAccount;
     /** 记录日期 */
