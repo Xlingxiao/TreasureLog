@@ -6,6 +6,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 用于处理时间相关
@@ -13,6 +15,9 @@ import java.util.Date;
 @SuppressWarnings("WeakerAccess")
 @Component
 public class DateUtils {
+    private static final SimpleDateFormat year = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat month = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat day = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat sdfDay = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat sdfMinute = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private static final SimpleDateFormat sdfSecond = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -58,6 +63,47 @@ public class DateUtils {
     public static Date getCurrentYearFirstDate() throws ParseException {
         int year = Calendar.getInstance().get(Calendar.YEAR);
         return stringToDate("" + year + "-01-01");
+    }
+
+    /**
+     * 获取年
+     * @param date date
+     * @return date对应的年
+     */
+    public static String getYear(Date date) {
+        return year.format(date);
+    }
+
+    /**
+     * 获取月
+     * @param date date
+     * @return date对应的年
+     */
+    public static String getMonth(Date date) {
+        return month.format(date);
+    }
+
+    /**
+     * 获取 日
+     * @param date date
+     * @return date对应的年
+     */
+    public static String getDay(Date date) {
+        return day.format(date);
+    }
+
+    /**
+     * 分别获取年 月 日
+     * @param date date
+     * @return map 单位 值
+     */
+    public static Map<String, String> getDateDetail(Date date) {
+        Map<String, String> dateDetail = new HashMap<>(16);
+        dateDetail.put("year", year.format(date));
+        dateDetail.put("month", month.format(date));
+        dateDetail.put("day", day.format(date));
+        dateDetail.put("fullDate", sdfDay.format(date));
+        return dateDetail;
     }
 
     public static void main(String[] args) throws ParseException {
