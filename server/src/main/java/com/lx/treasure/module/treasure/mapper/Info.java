@@ -22,6 +22,8 @@ public class Info {
     // id，用于标志主键
     @Id
     private long id;
+    // 记录日期
+    private String date;
     // 用户id
     private long userAccount;
     // 薪水

@@ -15,9 +15,9 @@ import java.util.Map;
 @SuppressWarnings("WeakerAccess")
 @Component
 public class DateUtils {
-    private static final SimpleDateFormat year = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat month = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat day = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat year = new SimpleDateFormat("yyyy");
+    private static final SimpleDateFormat month = new SimpleDateFormat("MM");
+    private static final SimpleDateFormat day = new SimpleDateFormat("dd");
     private static final SimpleDateFormat sdfDay = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat sdfMinute = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private static final SimpleDateFormat sdfSecond = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -90,6 +90,13 @@ public class DateUtils {
      */
     public static String getDay(Date date) {
         return day.format(date);
+    }
+
+    /**
+     * 获取当天
+     */
+    public static String getSdfDate(Date date) {
+        return sdfDay.format(date);
     }
 
     /**

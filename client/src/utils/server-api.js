@@ -164,6 +164,10 @@ var serverApi = function() {
 	this.getTreasureClassInfo = function(data) {
 		return this.post("/getTreasureClassInfo",data);
 	}
+	// 数据源相关
+	this.detailOpt = function(dataSource, opt, data) {
+		return this.post('/detail_opt/' + dataSource + '/' + opt, data);
+	}
 	// date对象格式化传入格式 (yyyymmdd,new Date())
 	this.dateFormat = function(fmt, date) {
 		let ret;

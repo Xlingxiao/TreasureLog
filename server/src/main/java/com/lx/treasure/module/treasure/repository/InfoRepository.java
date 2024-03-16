@@ -30,6 +30,10 @@ public interface InfoRepository extends JpaRepository<Info, Long> {
     @Query(value = "SELECT * FROM info a where a.user_account = ?1 ORDER BY a.insert_time DESC LIMIT ?2",nativeQuery = true)
     List<Info> findUserLatest(long userAccount, int limit);
 
+    // 获取用户所有
+    @Query(value = "SELECT * FROM info a where a.user_account = ?1 order by a.date DESC",nativeQuery = true)
+    List<Info> queryInfos(long userAccount);
+
     // 测试使用 通过id获取数据
     Info findById(long id);
 }

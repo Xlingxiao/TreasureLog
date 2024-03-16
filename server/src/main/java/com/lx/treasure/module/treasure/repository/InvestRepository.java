@@ -49,4 +49,7 @@ public interface InvestRepository extends JpaRepository<Invest,Long> {
             "ORDER BY table1.insert_time " +
             "LIMIT :#{#invo.findLimit}", nativeQuery = true)
     List<Invest> findFundByUserAccount(@Param("invo") G002Invo invo);
+
+    @Query(value = "SELECT * FROM invest where user_account = ?1 order by insert_time DESC", nativeQuery = true)
+    List<Invest> queryInvests(long userAccount);
 }
