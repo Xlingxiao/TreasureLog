@@ -23,8 +23,14 @@ public class SpendInfo {
     // 年收入
     private double annualIncome;
 
+    // 年被动收入
+    private double annualPassiveIncome;
+
     // 月收入
     private double monthlyIncome;
+
+    // 月被动收入
+    private double monthPassiveIncome;
 
     // 指定时间内的收入
     private double spanIncome;

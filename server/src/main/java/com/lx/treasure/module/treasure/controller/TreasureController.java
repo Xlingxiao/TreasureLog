@@ -1,6 +1,7 @@
 package com.lx.treasure.module.treasure.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.lx.treasure.bean.common.CommonException;
 import com.lx.treasure.bean.common.CommonResponse;
 import com.lx.treasure.bean.common.SuccessResponse;
@@ -9,6 +10,7 @@ import com.lx.treasure.module.treasure.mapper.Channel;
 import com.lx.treasure.module.treasure.mapper.Info;
 import com.lx.treasure.module.treasure.service.TreasureService;
 import com.lx.treasure.module.treasure.vo.InfoVo;
+import com.lx.treasure.module.treasure.vo.TreasureClassInfoVo;
 import com.lx.treasure.module.treasure.vo.TreasureStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -104,10 +106,22 @@ public class TreasureController {
     }
 
 
+    @PostMapping("/getTreasureClassInfo")
+    public List<TreasureClassInfoVo> getTreasureClassInfo(@RequestBody InfoVo infoVo) {
+        long userAccount = infoVo.getUserAccount();
+        return treasureService.getTreasureClassInfo(userAccount);
+    }
 
     @PostMapping(value = "/insert/complete")
     public CommonResponse addCompleteLog(@RequestBody CompleteLog log){
         return treasureService.addCompleteLog(log);
+    }
+
+    @PostMapping(value = "/init")
+    public CommonResponse init(@RequestBody String request) {
+        JSONObject json = JSONObject.parseObject(request);
+        treasureService.initField(json.getLong("userAccount"));
+        return new SuccessResponse();
     }
     /*-------------------TEST------------------*/
 

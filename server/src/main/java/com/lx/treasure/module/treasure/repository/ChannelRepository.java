@@ -1,6 +1,7 @@
 package com.lx.treasure.module.treasure.repository;
 
 import com.lx.treasure.module.treasure.mapper.Channel;
+import com.lx.treasure.module.treasure.mapper.TreasureClassInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -32,6 +33,9 @@ public interface ChannelRepository extends JpaRepository<Channel, Long> {
 
     @Query(value = "select * from channel a where user_account = ?1 and info_id = ?2 ",nativeQuery = true)
     List<Channel> queryChannels(long userAccount, long infoId);
+
+    @Query(value = "select * from channel a where user_account = ?1 order by insert_time DESC",nativeQuery = true)
+    List<Channel> queryChannels(long userAccount);
 
     // 测试用，通过id找数据
     Channel findById(long id);

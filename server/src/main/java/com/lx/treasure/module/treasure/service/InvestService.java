@@ -64,8 +64,8 @@ public class InvestService {
         Date date = new Date();
         for (Invest invest : invests) {
             invest.setId(idUtils.generateId());
-            if (invest.getInsert_time() == null) {
-                invest.setInsert_time(date);
+            if (invest.getInsertTime() == null) {
+                invest.setInsertTime(date);
             }
         }
     }
@@ -93,7 +93,7 @@ public class InvestService {
             grossList.add(gross);
             investList.add(invest);
             gainList.add(gain);
-            insertTimeList.add(DateUtils.dateToString(fund.getInsert_time()));
+            insertTimeList.add(DateUtils.dateToString(fund.getInsertTime()));
         });
         return new InvestInfo(invo.getUserAccount(), grossList, investList, gainList, insertTimeList);
     }

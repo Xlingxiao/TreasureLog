@@ -160,6 +160,14 @@ var serverApi = function() {
 	this.getTreasureStatus = function(data){
 		return this.post("/getTreasureStatus",data);
 	}
+	// 获取汇总的资产状态信息
+	this.getTreasureClassInfo = function(data) {
+		return this.post("/getTreasureClassInfo",data);
+	}
+	// 数据源相关
+	this.detailOpt = function(dataSource, opt, data) {
+		return this.post('/detail_opt/' + dataSource + '/' + opt, data);
+	}
 	// date对象格式化传入格式 (yyyymmdd,new Date())
 	this.dateFormat = function(fmt, date) {
 		let ret;

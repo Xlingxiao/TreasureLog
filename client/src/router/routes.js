@@ -40,6 +40,9 @@ const routes = [
             },{
                 path: 'text/show',
                 component: () => import('../components/page/text/show'),
+            },{
+                path: 'edit',
+                component: () => import('../components/page/edit/editRowData'),
             },
         ]
     },{

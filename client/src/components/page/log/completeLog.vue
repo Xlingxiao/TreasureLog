@@ -2,12 +2,20 @@
     <div>
         <h1>记录一笔</h1>
         <el-row class="el-row-wrap">
-            <el-col :span="5" class="el-col-wrap">
+            <el-col :span="3" class="el-col-wrap">
                 <div class="colorItem">薪水</div>
             </el-col>
-            <el-col :span="19" class="el-col-wrap">
+            <el-col :span="8" class="el-col-wrap">
                 <div class>
                     <el-input type="number" v-model="pay" class="inputItem"></el-input>
+                </div>
+            </el-col>
+            <el-col :span="5" class="el-col-wrap">
+                <div class="colorItem">新增投资</div>
+            </el-col>
+            <el-col :span="8" class="el-col-wrap">
+                <div class>
+                    <el-input type="number" v-model="investChangeAsset" class="inputItem"></el-input>
                 </div>
             </el-col>
         </el-row>
@@ -108,6 +116,7 @@ export default {
     data() {
         return {
             pay: "",
+            investChangeAsset: "",
             mainExpends: new Array(),
             channels: new Array(),
             channles1: new Array(),
@@ -119,7 +128,7 @@ export default {
         
     },
     mounted() {
-        this.channles1.push("微信", "支付宝","银行卡","信用卡");
+        this.channles1.push("微信", "支付宝","银行卡","信用卡","理财","证券","基金");
         this.channels.push({ channel1:"", name: "", value: 0 });
         this.mainExpends.push({ name: "", value: 0 });
     },
@@ -184,6 +193,7 @@ export default {
             let params = {
                 "userAccount": this.$store.state.userAccount,
                 "pay": this.pay,
+                "investChangeAsset": this.investChangeAsset,
                 "expendList": expendList,
                 "channel": channelList
             }
