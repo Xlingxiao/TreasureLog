@@ -140,6 +140,7 @@ public class ExpendService {
         Info lastInfo = infos.get(0);
         double lastMonthPay = lastInfo.getPay();
         double lastMonthSpend = lastInfo.getExpenditure();
+        double monthPassiveIncome = lastInfo.getPassiveIncome();
 
         if (infos.size() == 2) {
             long logSpanTime = lastInfo.getInsertTime().getTime() - infos.get(1).getInsertTime().getTime();
@@ -150,6 +151,7 @@ public class ExpendService {
         }
         spendInfo.setMonthSpend(lastMonthSpend);
         spendInfo.setMonthlyIncome(lastMonthPay);
+        spendInfo.setMonthlyIncome(monthPassiveIncome);
     }
 
     /**
@@ -165,12 +167,15 @@ public class ExpendService {
             if (infos != null) {
                 double yearSpend = 0;
                 double annualIncome = 0;
+                double annualPassiveIncome = 0;
                 for (Info info : infos) {
                     yearSpend += info.getExpenditure();
                     annualIncome += info.getPay();
+                    annualPassiveIncome += info.getPassiveIncome();
                 }
                 spendInfo.setYearSpend(yearSpend);
                 spendInfo.setAnnualIncome(annualIncome);
+                spendInfo.setAnnualIncome(annualPassiveIncome);
 
             }
         } catch (ParseException e) {

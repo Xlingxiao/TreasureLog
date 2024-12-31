@@ -19,8 +19,10 @@ public class CompleteLog {
     // 薪水
     private double pay;
 
+    // 投资本金变更
+    private double investChangeAsset;
+
     // 主要消费信息
-//    private String info;
     private List<ExpendVo> expendList;
 
     // 财富分布

@@ -110,21 +110,23 @@ export default {
                     let totalPay = new Array();
                     let logDate = new Array();
                     res.sort((a, b) => {
-                        return a.date - b.date;
+                        return a.insertTime - b.insertTime;
                     });
+                    console.log(res);
                     let latestPay = 0;
                     let latestAssets = 0;
                     for (let i in res) {
-                        if(i == 0) {
-                            latestPay = res[i].pay;
-                            latestAssets = latestPay + res[i].expend;
-                        }else {
-                            latestPay += res[i].pay;
-                            latestAssets =res[i].pay + totalAssetsData[i - 1] + res[i].expend; 
-                            console.log("历史薪水累计：", latestPay);
-                        }
-
-                        totalAssetsData.push(latestAssets);
+                        // if(i == 0) {
+                        //     latestPay = res[i].pay;
+                        //     latestAssets = latestPay + res[i].expend;
+                        // }else {
+                        //     latestPay += res[i].pay;
+                        //     latestAssets =res[i].pay + totalAssetsData[i - 1] + res[i].expend; 
+                        //     console.log("历史薪水累计：", latestPay);
+                        // }
+                        latestPay += res[i].pay;
+                        console.log("历史薪水累计：", latestPay);
+                        totalAssetsData.push(res[i].totalAsset);
                         totalPay.push(latestPay);
                         logDate.push(
                             this.dateFormat(
@@ -164,16 +166,16 @@ export default {
                     //     document.getElementById(this.chartID2)
                     // );
                     let pays = new Array();
-                    let expends = new Array();
+                    let expenditure = new Array();
                     let dateList = new Array();
                     for (let i in res) {
-                        expends.push(Math.abs(res[i].expend));
+                        expenditure.push(Math.abs(res[i].expenditure));
                         pays.push(res[i].pay);
                     }
                     option2.title['text'] = '月消费走势'
                     option2.series[1]["name"] = "月收入";
                     option2.series[1]["data"] = pays;
-                    option2.series[0]["data"] = expends;
+                    option2.series[0]["data"] = expenditure;
                     option2.series[0]["name"] = "月消费";
                     // option2.xAxis.data = dateList;
                     // myChart2.setOption(option2);

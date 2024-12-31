@@ -1,7 +1,10 @@
 package com.lx.treasure.module.treasure.mapper;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -50,6 +53,8 @@ public class Expend {
     private String detail;
 
     // 创建时间
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date insertTime;
 
 

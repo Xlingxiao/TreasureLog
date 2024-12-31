@@ -1,9 +1,9 @@
 spring:
   datasource:
     drive-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/treasure_life?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=true
-    username: treasureLife
-    password: lpszx123
+    url: jdbc:mysql://self:3306/treasure_life?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=true
+    username: treasure_user
+    password: treasure_user_8928
   jpa:
     properties:
       hibernate:

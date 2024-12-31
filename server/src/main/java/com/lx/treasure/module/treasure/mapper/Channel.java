@@ -1,6 +1,9 @@
 package com.lx.treasure.module.treasure.mapper;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -43,5 +46,7 @@ public class Channel {
     // 渠道对应的值
     private double money;
     // 插入时间
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date insertTime;
 }

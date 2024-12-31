@@ -1,5 +1,6 @@
 package com.lx.treasure.module.treasure.repository;
 
+import com.lx.treasure.module.treasure.mapper.Channel;
 import com.lx.treasure.module.treasure.mapper.Expend;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -27,4 +28,7 @@ public interface ExpendRepository extends JpaRepository<Expend, Long> {
             "and if(IFNULL(?3,'') != '', a.insert_time < ?3, 1=1) " +
             "ORDER BY a.insert_time", nativeQuery = true)
     List<Expend> findByUserAccount(long userAccount, Date startDate, Date endDate);
+
+    @Query(value = "select * from expend a where user_account = ?1 order by insert_time DESC",nativeQuery = true)
+    List<Expend> queryExpends(long userAccount);
 }

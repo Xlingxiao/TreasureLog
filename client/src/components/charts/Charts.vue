@@ -116,7 +116,7 @@ export default {
             this.count = 0;
             this.traverse(changedData);
             option.title[0].text = "总资产：" + this.count;
-            let titleInfo = "收入" + this.optionData.pay + ' 消费：' + this.optionData.expenditure;
+            let titleInfo = "收入: " + this.optionData.pay + ' 消费: ' + this.optionData.expenditure + ' 被动收入: ' + this.optionData.passiveIncome;
             let title2 = { text: titleInfo, left: "center", top: (this.top * 30) / 600,textStyle:{color: '#666',fontWeight: 'lighter',fontSize:15}}
             option.title[1] =title2;
             option.series.data = changedData.children;

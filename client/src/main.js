@@ -77,11 +77,12 @@ import {
 	// Backtop,
 	// PageHeader,
 	// CascaderPanel,
-	// Loading,
+	Loading,
 	// MessageBox,
 	Message,
 	avatar,
-	MessageBox
+	MessageBox,
+	popconfirm
 	// Notification
 } from 'element-ui';
 
@@ -159,6 +160,8 @@ Vue.use(Main);
 // Vue.use(Backtop);
 // Vue.use(PageHeader);
 // Vue.use(CascaderPanel);
+Vue.use(popconfirm);
+Vue.use(Loading);
 Vue.use(avatar);
 
 

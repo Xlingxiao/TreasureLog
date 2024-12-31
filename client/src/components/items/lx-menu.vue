@@ -183,6 +183,9 @@ export default {
                             name: "展示"
                         }
                     ]
+                },{
+                    index: "/index/edit",
+                    name: "编辑数据"
                 }
             ],
             defaultActive:"",
