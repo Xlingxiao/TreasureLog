@@ -203,6 +203,7 @@ public class TreasureService {
         ChannelsInfo channelsInfo = packageChannelsInfo(channelList);
         TreasureStatus treasureStatus = new TreasureStatus();
         treasureStatus.setPay(info.getPay());
+        treasureStatus.setPassiveIncome(info.getPassiveIncome());
         treasureStatus.setExpenditure(info.getExpenditure());
         treasureStatus.setDate(info.getInsertTime());
         treasureStatus.setChannelStatus(channelsInfo);

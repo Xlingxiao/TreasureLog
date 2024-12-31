@@ -22,6 +22,9 @@ public class TreasureStatus {
     /** 支出 */
     private double expenditure;
 
+    /** 被动收入 */
+    private double passiveIncome;
+
     /** 各个渠道财富状态 */
     ChannelsInfo channelStatus;
 
