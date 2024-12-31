@@ -26,6 +26,7 @@
         <el-table-column prop="money" sortable label="现金"> </el-table-column>
         <el-table-column prop="totalInvest" sortable label="理财"> </el-table-column>
         <el-table-column prop="debt" sortable label="负债"> </el-table-column>
+        <el-table-column prop="passiveIncome" sortable label="被动收入"> </el-table-column>
         <el-table-column prop="totalAsset" sortable label="汇总"> </el-table-column>
         <el-table-column label="操作">
       <template slot-scope="scope">
