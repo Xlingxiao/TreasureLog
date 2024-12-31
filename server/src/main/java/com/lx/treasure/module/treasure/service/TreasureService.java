@@ -9,6 +9,7 @@ import com.lx.treasure.bean.common.SuccessResponse;
 import com.lx.treasure.bean.ioBean.*;
 import com.lx.treasure.common.utils.DateUtils;
 import com.lx.treasure.mapper.TreasureClassMapper;
+import com.lx.treasure.module.treasure.constant.TreasureConstant;
 import com.lx.treasure.module.treasure.mapper.Channel;
 import com.lx.treasure.module.treasure.mapper.Info;
 import com.lx.treasure.common.utils.IdUtils;
@@ -24,10 +25,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("ChannelService")
 @Slf4j
@@ -68,21 +71,7 @@ public class TreasureService {
             return null;
         }
         List<Info> infoList = infoRepository.findInfoByUserAccount(baseInvo.getUserAccount(), baseInvo.getStartDate(), baseInvo.getEndDate());
-//        double profit1,profit2;
-//        List<Invest> investList = investRepository.findFundByUserAccount(baseInvo);
-//        if(infoList.size() > 2) {
-//            profit1 = investList.get(0).getGross() - investList.get(0).getInvest();
-//            profit2 = investList.get(1).getGross() - investList.get(1).getInvest();
-//        }
-        JSONArray result = new JSONArray();
-        for (Info info : infoList) {
-            JSONObject item = new JSONObject();
-            item.put("pay", info.getPay());
-            item.put("expend", info.getExpenditure());
-            item.put("date", info.getInsertTime());
-            result.add(item);
-        }
-        return result.toJSONString();
+        return JSONArray.toJSONString(infoList);
     }
 
     /**
@@ -191,7 +180,7 @@ public class TreasureService {
 
     /**
      * 获取用户的收支情况
-     * @param invo 用户信息
+     * @param userAccount 用户信息
      * @return 用户收支情况
      */
     public List<Info> getUserIncomeExpend(long userAccount) {
@@ -277,13 +266,17 @@ public class TreasureService {
         log.info("ChannelService 收到:" + completeLog.toString());
         Info info = buildInfo(completeLog);
         infoRepository.save(info);
-        List<Channel> channels = channelsInVoToChannelList(completeLog.getChannel(), completeLog.getUserAccount(), info.getId());
-        channelRepository.saveAll(channels);
-        List<ExpendVo> expendVos = completeLog.getExpendList();
-        for (ExpendVo expendVo : expendVos) {
-            expendVo.setUserAccount(completeLog.getUserAccount());
+        if (!CollectionUtils.isEmpty(completeLog.getChannel())) {
+            List<Channel> channels = channelsInVoToChannelList(completeLog.getChannel(), completeLog.getUserAccount(), info.getId());
+            channelRepository.saveAll(channels);
         }
-        expendService.addExpend(completeLog.getExpendList());
+        List<ExpendVo> expendVos = completeLog.getExpendList();
+        if (!CollectionUtils.isEmpty(expendVos)) {
+            for (ExpendVo expendVo : expendVos) {
+                expendVo.setUserAccount(completeLog.getUserAccount());
+            }
+            expendService.addExpend(completeLog.getExpendList());
+        }
         SuccessResponse response = new SuccessResponse();
         log.info("返回结果：" + response.toString());
         return response;
@@ -298,6 +291,34 @@ public class TreasureService {
     private Info buildInfo(CompleteLog completeLog) {
         Info info = new Info();
         BeanUtils.copyProperties(completeLog, info);
+
+        // 总资产
+        int totalAsset = 0;
+        // 投资总值
+        int totalInvest = 0;
+        List<ChannelInVo> channelList = completeLog.getChannel();
+        for (ChannelInVo channel : channelList) {
+            totalAsset += channel.getValue();
+            // 是否投资渠道
+            if (isInvestChannel(channel.getChannel1()) || isInvestChannel(channel.getChannel2())) {
+                totalInvest += channel.getValue();
+            }
+        }
+        // 获取上月info信息
+        Info userLatest = infoRepository.findUserLatest(info.getUserAccount());
+        // 资产变更总量 = 本月资产总数 - 上月总数
+        double assetChange = totalAsset - userLatest.getTotalAsset();
+        // 被动收入 = 本月投资资产 - 上月投资资产 - 本月新增投入
+        double passiveIncome = totalInvest - userLatest.getTotalInvest() - completeLog.getInvestChangeAsset();
+        // 消费 = 当前总资产 - （上月总资产 + 收入 + 被动收入）
+        double expend = totalAsset - (userLatest.getTotalAsset() + info.getPay() + passiveIncome);
+
+        info.setTotalAsset(totalAsset);
+        info.setTotalInvest(totalInvest);
+        info.setAssetChange(assetChange);
+        info.setPassiveIncome(passiveIncome);
+        info.setExpenditure(expend);
+
         long id = idUtils.generateId();
         info.setId(id);
         Date now = new Date();
@@ -305,32 +326,25 @@ public class TreasureService {
         info.setInsertTime(now);
         info.setUpdateTime(now);
         info.setUserAccount(completeLog.getUserAccount());
-        info.setExpenditure(getExpend(completeLog));
         return info;
     }
 
+
     /**
-     * 获取两次记录之间的消费
-     * 1. 可以获取到当前总资产
-     * 2. 可以获取到记录间隔内的收入
-     * 3. 消费 = 总资产 + 收入 - 上次次记录的总资产
+     * 判断渠道是否为理财渠道
+     * @param channel 渠道
+     * @return 是否
      */
-    private double getExpend(CompleteLog completeLog) {
-        long user = completeLog.getUserAccount();
-        // 当前总资产
-        double totalAssets = 0;
-        double lastTotalAssets = 0;
-        List<ChannelInVo> currentChannels = completeLog.getChannel();
-        for (ChannelInVo currentChannel : currentChannels) {
-            totalAssets += currentChannel.getValue();
+    private boolean isInvestChannel(String channel){
+        List<String> investChannel = TreasureConstant.INVEST_CHANNEL_LIST;
+        for (String c : investChannel) {
+            if (channel.contains(c)) {
+                return true;
+            }
         }
-        // 上次记录的总资产
-        List<Channel> channelList = channelRepository.findLatestByUserAccount(user);
-        for (Channel channel : channelList) {
-            lastTotalAssets += channel.getMoney();
-        }
-        return totalAssets - completeLog.getPay() - lastTotalAssets;
+        return false;
     }
+
 
     /**
      * 获取汇总的状态信息
@@ -372,5 +386,54 @@ public class TreasureService {
 
     public Channel findUserById(long id) {
         return channelRepository.findById(id);
+    }
+
+    /**
+     * 初始化部分新增字段
+     * 获取所有channel信息
+     */
+    public void initField(long userAccount) {
+        final List<Channel> channels = channelRepository.queryChannels(userAccount);
+        final Map<Long, List<Channel>> collect = channels.stream().collect(Collectors.groupingBy(Channel::getInfoId));
+        for (Map.Entry<Long, List<Channel>> entry : collect.entrySet()) {
+            final long infoId = entry.getKey();
+            final List<Channel> channelList = entry.getValue();
+            Info info = new Info();
+            info.setId(infoId);
+
+            // 总资产
+            int totalAsset = 0;
+            // 投资总值
+            int totalInvest = 0;
+            for (Channel channel : channelList) {
+                totalAsset += channel.getMoney();
+                // 是否投资渠道
+                if (isInvestChannel(channel.getChannel1()) || isInvestChannel(channel.getChannel2())) {
+                    totalInvest += channel.getMoney();
+                }
+            }
+            info.setTotalAsset(totalAsset);
+            info.setTotalInvest(totalInvest);
+
+            // 获取上月info信息
+            Info currentInfo = infoRepository.findById(infoId);
+            if (currentInfo == null) {
+                continue;
+            }
+            Info userLatest = infoRepository.findUserLatestByDate(userAccount, currentInfo.getDate());
+            if (userLatest != null) {
+                // 资产变更总量 = 本月资产总数 - 上月总数
+                double assetChange = totalAsset - userLatest.getTotalAsset();
+                // 被动收入 = 本月投资资产 - 上月投资资产 - 本月新增投入
+                double passiveIncome = 0;
+                // 消费 = 资产变更总量 - 被动收入
+                double expend = assetChange - passiveIncome;
+                info.setAssetChange(assetChange);
+                info.setPassiveIncome(passiveIncome);
+                info.setExpenditure(expend);
+            }
+            treasureClassMapper.updateInfo(info);
+
+        }
     }
 }

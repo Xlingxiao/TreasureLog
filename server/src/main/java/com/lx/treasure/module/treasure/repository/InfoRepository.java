@@ -36,4 +36,7 @@ public interface InfoRepository extends JpaRepository<Info, Long> {
 
     // 测试使用 通过id获取数据
     Info findById(long id);
+
+    @Query(value = "SELECT * FROM info a where a.user_account = ?1 and a.date < ?2 order by date desc LIMIT 1",nativeQuery = true)
+    Info findUserLatestByDate(long userAccount, String date);
 }

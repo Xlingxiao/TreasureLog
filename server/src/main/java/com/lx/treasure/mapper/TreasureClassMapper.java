@@ -1,5 +1,6 @@
 package com.lx.treasure.mapper;
 
+import com.lx.treasure.module.treasure.mapper.Info;
 import com.lx.treasure.module.treasure.mapper.TreasureClassInfo;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -14,4 +15,11 @@ public interface TreasureClassMapper {
      * @return 汇总的资产信息
      */
     List<TreasureClassInfo> getTreasureClassInfo(long userAccount);
+
+    /**
+     * 更新info 表
+     * @param info
+     * @return
+     */
+    int updateInfo(Info info);
 }

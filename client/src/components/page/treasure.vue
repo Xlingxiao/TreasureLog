@@ -24,9 +24,9 @@
         <el-table-column prop="pay" sortable label="薪水" style="text-align: right"> </el-table-column>
         <el-table-column prop="expenditure" sortable label="支出"> </el-table-column>
         <el-table-column prop="money" sortable label="现金"> </el-table-column>
-        <el-table-column prop="invest" sortable label="理财"> </el-table-column>
+        <el-table-column prop="totalInvest" sortable label="理财"> </el-table-column>
         <el-table-column prop="debt" sortable label="负债"> </el-table-column>
-        <el-table-column prop="total" sortable label="汇总"> </el-table-column>
+        <el-table-column prop="totalAsset" sortable label="汇总"> </el-table-column>
         <el-table-column label="操作">
       <template slot-scope="scope">
         <el-button

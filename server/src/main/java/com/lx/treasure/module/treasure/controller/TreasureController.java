@@ -1,6 +1,7 @@
 package com.lx.treasure.module.treasure.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.lx.treasure.bean.common.CommonException;
 import com.lx.treasure.bean.common.CommonResponse;
 import com.lx.treasure.bean.common.SuccessResponse;
@@ -114,6 +115,13 @@ public class TreasureController {
     @PostMapping(value = "/insert/complete")
     public CommonResponse addCompleteLog(@RequestBody CompleteLog log){
         return treasureService.addCompleteLog(log);
+    }
+
+    @PostMapping(value = "/init")
+    public CommonResponse init(@RequestBody String request) {
+        JSONObject json = JSONObject.parseObject(request);
+        treasureService.initField(json.getLong("userAccount"));
+        return new SuccessResponse();
     }
     /*-------------------TEST------------------*/
 

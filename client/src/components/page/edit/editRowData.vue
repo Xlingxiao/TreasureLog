@@ -22,7 +22,7 @@
         :align="column.align"
       >
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="100">
+      <el-table-column label="操作" width="100">
         <template slot-scope="scope">
           <el-button @click="showEdit('update',scope.row)" type="text" size="small">编辑</el-button>
           <el-popconfirm title="确定删除吗？" @cancel="deleteRow()" @onConfirm="deleteRow(scope.row)"> 
@@ -66,8 +66,13 @@ export default {
                 { prop: "insertTime", label: "记录日期", sortable: true, align: "left"},
             ],
             info: [
+                { prop: "totalAsset", label: "总资产", sortable: true, align: "left" },
+                { prop: "totalInvest", label: "总投资", sortable: true, align: "left" },
+                { prop: "investChangeAsset", label: "新增投资", sortable: true, align: "left" },
                 { prop: "pay", label: "收入", sortable: true, align: "left" },
-                { prop: "expenditure", label: "花费", sortable: true, align: "right" },
+                { prop: "assetChange", label: "资产变化", sortable: true, align: "left" },
+                { prop: "passiveIncome", label: "被动收入", sortable: true, align: "left" },
+                { prop: "expenditure", label: "花费", sortable: true, align: "left" },
                 { prop: "date", label: "记录日期", sortable: true, align: "left" },
             ],
             expend: [

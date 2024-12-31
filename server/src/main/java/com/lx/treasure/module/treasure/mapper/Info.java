@@ -26,8 +26,18 @@ public class Info {
     private String date;
     // 用户id
     private long userAccount;
+    // 总资产
+    private double totalAsset;
+    // 总投资
+    private double totalInvest;
+    // 新增投资
+    private double investChangeAsset;
     // 薪水
     private double pay;
+    // 资产变更总数
+    private double assetChange;
+    // 被动收入
+    private double passiveIncome;
     // 花费
     private double expenditure;
     // 消费介绍
