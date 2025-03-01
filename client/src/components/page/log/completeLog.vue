@@ -26,7 +26,6 @@
         </el-row>
         <el-row v-for="mainExpend in mainExpends" class="el-row-wrap">
             <el-col :span="11" class="el-col-wrap">
-                <!-- <div class="colorItem">{{mainExpend.name}}</div> -->
                 <el-input
                     @blur="fillterEmpty(1)"
                     placeholder="物品名称"
@@ -37,7 +36,7 @@
             <el-col :span="2">
                 <p></p>
             </el-col>
-            <el-col :span="11" class="el-col-wrap">
+            <el-col :span="10" class="el-col-wrap">
                 <div class>
                     <el-input
                         v-model="mainExpend.value"
@@ -50,6 +49,11 @@
         </el-row>
         <el-row class="el-row-wrap">
             <el-col class="el-col-wrap">
+                <el-button
+                    @click="cleanEmpty('expend')"
+                    type="warning"
+                    icon="el-icon-s-open"
+                >清理空记录</el-button>
                 <el-button
                     @click="addOneExpend"
                     type="primary"
@@ -95,6 +99,11 @@
         <el-row class="el-row-wrap">
             <el-col class="el-col-wrap">
                 <el-button
+                    @click="cleanEmpty('channel')"
+                    type="warning"
+                    icon="el-icon-s-open"
+                >清理空记录</el-button>
+                <el-button
                     @click="addOneChannel"
                     type="primary"
                     icon="el-icon-circle-plus-outline"
@@ -117,7 +126,10 @@ export default {
         return {
             pay: "",
             investChangeAsset: "",
-            mainExpends: new Array(),
+            mainExpends: [{
+                "name": "房租",
+                "value": "4400"
+            }],
             channels: new Array(),
             channles1: new Array(),
             channle1: "",
@@ -129,7 +141,8 @@ export default {
     },
     mounted() {
         this.channles1.push("微信", "支付宝","银行卡","信用卡","理财","证券","基金");
-        this.channels.push({ channel1:"", name: "", value: 0 });
+        // this.channels.push({ channel1:"", name: "", value: 0 });
+        this.initLog();
         this.mainExpends.push({ name: "", value: 0 });
     },
     methods: {
@@ -158,9 +171,12 @@ export default {
             currentChannel.channel1 = channel;
         },
         // 添加一个财富记录
-        addOneChannel() {
+        addOneChannel(channelItem) {
             this.fillterEmpty(2);
-            this.channels.push({channel1:"", name: "", value: 0 });
+            if(!channelItem) {
+                channelItem = {channel1:"", name: "", value: 0 };
+            }
+            this.channels.push(channelItem);
         },
         // 整理请求参数
         submit() {
@@ -203,6 +219,93 @@ export default {
             }).catch(e=>{
                 this.$alert("记录失败请稍后重试！")
             });
+        },
+        cleanEmpty(box) {
+            if(box == 'expend') {
+                this.mainExpends = this.mainExpends.filter(
+                    (item, key) => item.value && item.name
+                );
+            }
+            if(box == 'channel') {
+                this.channels = this.channels.filter(
+                    (item, key) => item.value && item.name
+                );
+            }
+        },
+        initLog() {
+            let channel = [
+                {
+                    "channel1": "微信",
+                    "name": "余额",
+                    "value": ""
+                },
+                {
+                    "channel1": "支付宝",
+                    "name": "余额宝",
+                    "value": ""
+                },
+                {
+                    "channel1": "支付宝",
+                    "name": "帮你亏",
+                    "value": ""
+                },
+                {
+                    "channel1": "支付宝",
+                    "name": "基金",
+                    "value": ""
+                },
+                {
+                    "channel1": "银行卡",
+                    "name": "建行",
+                    "value": ""
+                },
+                {
+                    "channel1": "理财",
+                    "name": "建行",
+                    "value": ""
+                },
+                {
+                    "channel1": "信用卡",
+                    "name": "建行",
+                    "value": ""
+                },
+                {
+                    "channel1": "银行卡",
+                    "name": "工行",
+                    "value": ""
+                },
+                {
+                    "channel1": "银行卡",
+                    "name": "招行",
+                    "value": ""
+                },
+                {
+                    "channel1": "信用卡",
+                    "name": "招行",
+                    "value": ""
+                },
+                {
+                    "channel1": "基金",
+                    "name": "招行",
+                    "value": ""
+                },
+                {
+                    "channel1": "基金",
+                    "name": "南方",
+                    "value": ""
+                },
+                {
+                    "channel1": "理财",
+                    "name": "中银",
+                    "value": ""
+                },
+                {
+                    "channel1": "证券",
+                    "name": "长桥",
+                    "value": ""
+                }
+            ]
+            this.channels = channel;
         }
     }
 };
