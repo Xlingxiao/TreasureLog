@@ -24,7 +24,7 @@
                 <div class="colorItem">主要消费</div>
             </el-col>
         </el-row>
-        <el-row v-for="mainExpend in mainExpends" class="el-row-wrap">
+        <el-row v-for="(mainExpend, index) in mainExpends" :key="index" class="el-row-wrap">
             <el-col :span="11" class="el-col-wrap">
                 <el-input
                     @blur="fillterEmpty(1)"
@@ -68,10 +68,10 @@
             </el-col>
         </el-row>
 
-        <el-row v-for="channel in channels" class="el-row-wrap">
+        <el-row v-for="(channel, index) in channels" :key="index" class="el-row-wrap">
             <el-col :span="8" class="el-col-wrap">
                 <el-select v-model="channel.channel1" placeholder="财富渠道">
-                    <el-option v-for="item in channles1" :key="item" :label="item" :value="item">
+                    <el-option v-for="item in channels1" :key="item" :label="item" :value="item">
                         <span>{{ item }}</span>
                     </el-option>
                     <el-input
@@ -131,8 +131,8 @@ export default {
                 "value": "4400"
             }],
             channels: new Array(),
-            channles1: new Array(),
-            channle1: "",
+            channels1: new Array(),
+            channel1: "",
             newChannel: ""
         };
     },
@@ -140,10 +140,12 @@ export default {
         
     },
     mounted() {
-        this.channles1.push("微信", "支付宝","银行卡","信用卡","理财","证券","基金");
-        // this.channels.push({ channel1:"", name: "", value: 0 });
+        this.channels1.push("微信", "支付宝", "银行卡", "信用卡", "理财", "证券", "基金");
         this.initLog();
         this.mainExpends.push({ name: "", value: 0 });
+        
+        // 为每个 channel 添加唯一的 id
+        this.channels.push({ id: Date.now(), channel1: "", name: "", value: "" });
     },
     methods: {
         // 添加一个主要花销
@@ -159,22 +161,32 @@ export default {
                 );
             else 
                 this.channels = this.channels.filter(
-                    (item, key) => item.value || item.name
+                    (item, key) => item.value || item.name || item.channel1
                 );
             
+            // 确保至少有一个空记录用于输入
+            if (num == 2) {
+                const emptyChannel = this.channels.find(channel => 
+                    !channel.channel1 && !channel.name && !channel.value);
+                if (!emptyChannel) {
+                    this.channels.push({ channel1: "", name: "", value: "" });
+                }
+            }
         },
         // 新增一个一级渠道
         addChannel(currentChannel) {
             let channel = this.newChannel;
-            this.channles1.push(channel);
-            this.newChannel = "";
-            currentChannel.channel1 = channel;
+            if (channel) {
+                this.channels1.push(channel);
+                this.newChannel = "";
+                currentChannel.channel1 = channel;
+            }
         },
         // 添加一个财富记录
         addOneChannel(channelItem) {
-            this.fillterEmpty(2);
+            // 不在這裡調用 fillterEmpty，避免過濾掉剛添加的空記錄
             if(!channelItem) {
-                channelItem = {channel1:"", name: "", value: 0 };
+                channelItem = {channel1:"", name: "", value: "" };
             }
             this.channels.push(channelItem);
         },
