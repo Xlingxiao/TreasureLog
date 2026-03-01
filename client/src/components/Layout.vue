@@ -12,8 +12,15 @@
             ></lx-menu>
         </el-aside>
         <el-container>
-            <el-header>
+            <el-header class="layout-header">
                 <span>{{title}}</span>
+                <el-button
+                    type="text"
+                    class="logout-btn"
+                    @click="logout"
+                >
+                    <i class="el-icon-switch-button"></i> 退出
+                </el-button>
             </el-header>
             <i @click="changeOpenStatus" :class="style.switchIcon" :style="style.switch"></i>
             <el-main class="el-main">
@@ -109,6 +116,11 @@ export default {
             if (this.isOpen) this.style.switchIcon = "el-icon-arrow-left";
             else this.style.switchIcon = "el-icon-arrow-right";
             console.log("Switch Status", this.isOpen);
+        },
+        logout() {
+            this.http.logout();
+            this.$message.success("已退出登录");
+            this.$router.push({ path: '/login' });
         }
     }
 };
@@ -120,6 +132,22 @@ export default {
     color: #fff;
     line-height: 60px;
     font-size: 25px;
+}
+
+.layout-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logout-btn {
+    color: #fff !important;
+    font-size: 14px;
+    padding: 7px 15px;
+}
+
+.logout-btn:hover {
+    color: #e0e0e0 !important;
 }
 
 .el-aside {

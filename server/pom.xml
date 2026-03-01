@@ -130,7 +130,19 @@
 					<include>**/*.yml</include>
 					<include>**/*.xml</include>
 				</includes>
+				<excludes>
+					<exclude>log4j.properties</exclude>
+				</excludes>
 				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>
+					src/main/resources
+				</directory>
+				<includes>
+					<include>log4j.properties</include>
+				</includes>
+				<filtering>false</filtering>
 			</resource>
 		</resources>
 	</build>

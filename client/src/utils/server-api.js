@@ -96,6 +96,13 @@ var serverApi = function() {
 		})
 	}
 
+	this.logout = function() {
+		// 先调用后端接口使 token 失效
+		this.post("/logout", {}).catch(function() {});
+		localStorage.removeItem('token');
+		config.headers.Authorization = null;
+	}
+
 	this.isLogged = function() {
 		return this.post("/getChannels",{},true)
 	}

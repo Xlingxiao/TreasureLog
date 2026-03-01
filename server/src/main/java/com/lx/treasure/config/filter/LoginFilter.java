@@ -7,7 +7,9 @@ import com.lx.treasure.bean.common.CommonException;
 import com.lx.treasure.bean.common.ContentText;
 import com.lx.treasure.common.utils.JWTUtils;
 import com.lx.treasure.common.utils.StreamUtils;
+import com.lx.treasure.common.utils.TokenBlacklistService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -43,6 +45,9 @@ public class LoginFilter implements Filter {
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     @Value("#{'${auth.dontCheckToken}'.replaceAll(' ','').split(',')}")
     private List<String> dontCheckURI = new ArrayList<>();
+
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
 
 
     @Override
@@ -88,7 +93,11 @@ public class LoginFilter implements Filter {
      */
     private Map<String,Object> checkToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            Map<String,Object> tokenParams = JWTUtils.getTokenParams(request.getHeader("Authorization"));
+            String token = request.getHeader("Authorization");
+            if (tokenBlacklistService.isBlacklisted(token)) {
+                throw new CommonException(ContentText.TOKEN_ERROR_CODE, ContentText.TOKEN_INVALID_ERROR);
+            }
+            Map<String,Object> tokenParams = JWTUtils.getTokenParams(token);
             if (tokenParams == null) {
                 throw new CommonException(ContentText.TOKEN_ERROR_CODE, ContentText.TOKEN_ERROR);
             }

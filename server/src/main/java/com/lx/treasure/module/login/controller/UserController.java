@@ -2,6 +2,7 @@ package com.lx.treasure.module.login.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.lx.treasure.bean.common.CommonException;
+import com.lx.treasure.common.utils.TokenBlacklistService;
 import com.lx.treasure.module.login.bo.UserInfo;
 import com.lx.treasure.module.login.service.UserService;
 import com.lx.treasure.module.login.vo.UserInfoVo;
@@ -10,6 +11,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Auther: Lx
@@ -21,6 +26,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    TokenBlacklistService tokenBlacklistService;
 
     @PostMapping(value = "/login")
     public UserInfoVo login(@RequestBody String request) throws CommonException {
@@ -34,5 +42,16 @@ public class UserController {
         }
         UserInfo userInfo = userInfoJson.toJavaObject(UserInfo.class);
         return userService.loginService(userInfo);
+    }
+
+    @PostMapping(value = "/logout")
+    public Map<String, Object> logout(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (!StringUtils.isEmpty(token)) {
+            tokenBlacklistService.add(token);
+        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("message", "登出成功");
+        return result;
     }
 }
