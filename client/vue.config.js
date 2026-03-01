@@ -3,7 +3,15 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-let argvs = JSON.parse(process.env.npm_config_argv).original.splice(2);
+// 兼容新旧版本 npm 获取参数的方式
+let argvs = [];
+if (process.env.npm_config_argv) {
+    try {
+        argvs = JSON.parse(process.env.npm_config_argv).original.splice(2);
+    } catch (e) {
+        argvs = [];
+    }
+}
 console.log("目录参数", argvs)
 //如果有参数，则打包到不同目录
 var subDir = ""
