@@ -167,9 +167,9 @@ Vue.use(avatar);
 
 Vue.config.productionTip = false
 
-import serverApi from 'utils/server-api'
-Vue.prototype.http = new serverApi()
-import myCrypto from 'utils/treasureCrypto.js'
+import serverApi from 'api'
+Vue.prototype.http = serverApi
+import myCrypto from 'utils/crypto'
 Vue.prototype.Crypto = myCrypto
 
 import echarts from 'echarts';
@@ -178,9 +178,9 @@ Vue.prototype.$echarts = echarts;
 Vue.prototype.$alert = MessageBox;
 Vue.prototype.$message = Message;
 
-import router from './router.js'
+import router from 'router'
 
-import store from './vuex/vuex'
+import store from 'store'
 
 new Vue({
 	store,
