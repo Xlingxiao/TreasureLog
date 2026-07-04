@@ -12,6 +12,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+# 修复 PowerShell 控制台中文乱码
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 # ===================== 配置区 =====================
 $SshHost   = "root@self"                              # SSH 免密别名（root 用户）

@@ -5,13 +5,17 @@
 #  用法：
 #     pwsh .qoder/skills/deploy-frontend/scripts/deploy-frontend.ps1
 #     pwsh .qoder/skills/deploy-frontend/scripts/deploy-frontend.ps1 -SkipBuild   # 跳过 npm build，用已有 dist
+#     pwsh .qoder/skills/deploy-frontend/scripts/deploy-frontend.ps1 -Clean       # 解压前清空构建目录(css/js/img/fonts)，清除旧 hash 残留
 # ============================================================
 
 param(
-    [switch]$SkipBuild
+    [switch]$SkipBuild,
+    [switch]$Clean
 )
 
 $ErrorActionPreference = "Stop"
+# 修复 PowerShell 控制台中文乱码
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 # ===================== 配置区 =====================
 $SshHost   = "root@self"                     # SSH 免密别名（root 用户）
@@ -78,6 +82,14 @@ Write-Host "  上传并校验通过 ($remoteSize 字节)" -ForegroundColor Green
 
 # ---------- 4. 覆盖解压到部署目录（unzip -o 只覆盖同名文件，保留其他文件） ----------
 Write-Host "`n[4/5] 覆盖解压 $ZipName -> $RemoteDir ..." -ForegroundColor Yellow
+if ($Clean) {
+    $buildDirs = (Get-ChildItem $DistDir -Directory | Select-Object -ExpandProperty Name) -join ' '
+    if ($buildDirs) {
+        Write-Host "  -Clean: 先清空构建目录 ($buildDirs)" -ForegroundColor DarkYellow
+        ssh @SshOpts $SshHost "cd $RemoteDir && rm -rf $buildDirs"
+        if ($LASTEXITCODE -ne 0) { Fail "清空构建目录失败" }
+    }
+}
 ssh @SshOpts $SshHost "cd $RemoteDir && unzip -o $ZipName -d $RemoteDir >/dev/null && echo '  解压完成'"
 if ($LASTEXITCODE -ne 0) { Fail "解压失败" }
 

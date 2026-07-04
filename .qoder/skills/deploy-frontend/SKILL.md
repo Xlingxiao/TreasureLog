@@ -28,6 +28,12 @@ pwsh .qoder/skills/deploy-frontend/scripts/deploy-frontend.ps1
 pwsh .qoder/skills/deploy-frontend/scripts/deploy-frontend.ps1 -SkipBuild
 ```
 
+干净部署（解压前清空 `css/js/img/fonts` 等构建目录，清除旧 hash 残留文件；保留根目录下你的自有文件）：
+
+```bash
+pwsh .qoder/skills/deploy-frontend/scripts/deploy-frontend.ps1 -Clean
+```
+
 脚本按顺序执行，任一步失败即中止：
 
 ```
