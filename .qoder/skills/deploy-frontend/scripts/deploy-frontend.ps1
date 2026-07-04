@@ -53,14 +53,13 @@ if (-not (Test-Path (Join-Path $DistDir "index.html"))) {
     Fail "dist 未生成：$DistDir`n    请去掉 -SkipBuild 重新构建"
 }
 
-# ---------- 1. 本地 zip 打包 dist 内容（不含顶层 dist 目录） ----------
+# ---------- 1. 本地 zip 打包整个 dist 文件夹（包含顶层目录） ----------
 Write-Host "`n[1/5] 打包 dist -> $ZipName ..." -ForegroundColor Yellow
 if (Test-Path $LocalZip) { Remove-Item $LocalZip -Force }
-Compress-Archive -Path (Join-Path $DistDir "*") -DestinationPath $LocalZip -Force
-if (-not (Test-Path $LocalZip)) { Fail "本地 zip 打包失败" }
+# 打包 dist 文件夹本身，而不是里面的内容
+Compress-Archive -Path $DistDir -DestinationPath $LocalZip -Force
 $localSize = (Get-Item $LocalZip).Length
-Write-Host ("  本地 zip : {0} ({1:N0} 字节)" -f $LocalZip, $localSize) -ForegroundColor Cyan
-Write-Host ("  目标     : {0}:{1}/{2}" -f $SshHost, $RemoteDir, $ZipName) -ForegroundColor Cyan
+Write-Host "  已生成 $ZipName ($localSize 字节)" -ForegroundColor Green
 
 # ---------- 2. 删除旧备份 + 备份现有 zip ----------
 Write-Host "`n[2/5] 删除旧备份并备份现有 $ZipName ..." -ForegroundColor Yellow
@@ -80,18 +79,15 @@ ssh @SshOpts $SshHost "cd $RemoteDir && mv -f $ZipName.new $ZipName"
 if ($LASTEXITCODE -ne 0) { Fail "替换 $ZipName 失败" }
 Write-Host "  上传并校验通过 ($remoteSize 字节)" -ForegroundColor Green
 
-# ---------- 4. 覆盖解压到部署目录（unzip -o 只覆盖同名文件，保留其他文件） ----------
+# ---------- 4. 覆盖解压到部署目录（解压后得到 dist 文件夹） ----------
 Write-Host "`n[4/5] 覆盖解压 $ZipName -> $RemoteDir ..." -ForegroundColor Yellow
 if ($Clean) {
-    $buildDirs = (Get-ChildItem $DistDir -Directory | Select-Object -ExpandProperty Name) -join ' '
-    if ($buildDirs) {
-        Write-Host "  -Clean: 先清空构建目录 ($buildDirs)" -ForegroundColor DarkYellow
-        ssh @SshOpts $SshHost "cd $RemoteDir && rm -rf $buildDirs"
-        if ($LASTEXITCODE -ne 0) { Fail "清空构建目录失败" }
-    }
+    # 清空时直接删除整个 dist 目录，避免残留
+    Write-Host "  -Clean: 先删除 $RemoteDir/dist" -ForegroundColor DarkYellow
+    ssh @SshOpts $SshHost "cd $RemoteDir && rm -rf dist"
+    if ($LASTEXITCODE -ne 0) { Fail "删除 dist 目录失败" }
 }
-ssh @SshOpts $SshHost "cd $RemoteDir && unzip -o $ZipName -d $RemoteDir >/dev/null && echo '  解压完成'"
-if ($LASTEXITCODE -ne 0) { Fail "解压失败" }
+ssh @SshOpts $SshHost "cd $RemoteDir && unzip -o $ZipName -d $RemoteDir >/dev/null && echo '  解压完成 (dist 文件夹已生成)'"
 
 # ---------- 5. 验证 ----------
 Write-Host "`n[5/5] 验证部署结果 ..." -ForegroundColor Yellow
