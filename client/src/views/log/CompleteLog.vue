@@ -104,7 +104,7 @@
                     icon="el-icon-s-open"
                 >清理空记录</el-button>
                 <el-button
-                    @click="addOneChannel"
+                    @click="addOneChannel()"
                     type="primary"
                     icon="el-icon-circle-plus-outline"
                 >新增</el-button>
