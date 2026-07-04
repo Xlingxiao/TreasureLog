@@ -41,6 +41,11 @@ module.exports = {
             .set('assets', resolve('src/assets'))
             .set('components', resolve('src/components'))
             .set('utils', resolve('src/utils'))
+            .set('api', resolve('src/api'))
+            .set('views', resolve('src/views'))
+            .set('store', resolve('src/store'))
+            .set('layout', resolve('src/layout'))
+            .set('router', resolve('src/router'))
         config.plugin('copy').tap(args => {
             console.log("args", args[0][0])
             if(process.env.NODE_ENV === 'production') {
