@@ -47,6 +47,8 @@ export default {
             myChart: {},
             min: 0,
             count: 0,
+            // 饼图下钻状态
+            pieState: { level: 1, level1Data: [], drillMap: {}, totalText: "", currentName: "" },
         };
     },
     watch: {
@@ -101,28 +103,17 @@ export default {
             this.myChart.setOption(changedData);
             console.log(this.option);
         },
-        // 更新数据
+        // 更新数据：切换日期后重建饼图并重置到一级视图
         updateChartData() {
             this.myChart.hideLoading();
-            let changedData = this.optionData.channelStatus;
-            // let option = this.myChart.getOption();
-            // console.log(option);
-            // option.series[0].data = changedData.children;
-            // option.title[0].text = this.title;
-            // console.log(option);
-            // this.myChart.setOption(option);
-            let option = this.option;
-            console.log(option);
-            this.count = 0;
-            this.traverse(changedData);
-            option.title[0].text = "总资产：" + this.count;
-            let titleInfo = "收入: " + this.optionData.pay + ' 消费: ' + this.optionData.expenditure + ' 被动收入: ' + this.optionData.passiveIncome;
-            let title2 = { text: titleInfo, left: "center", top: (this.top * 30) / 600,textStyle:{color: '#666',fontWeight: 'lighter',fontSize:15}}
-            option.title[1] =title2;
-            option.series.data = changedData.children;
-            this.myChart.setOption(option);
+            let root = this.optionData.channelStatus;
+            this.buildPieData(root);
+            this.bindPieEvents();
+            let sub = "收入: " + this.optionData.pay + " 消费: " + this.optionData.expenditure
+                + " 被动收入: " + this.optionData.passiveIncome;
+            this.renderPie(this.pieState.level1Data, this.pieState.totalText, sub, false);
         },
-        // 默认画个旭日图
+        // 默认展示一级分类环形饼图
         defaultDrawing() {
             let params = {
                 userAccount: this.$store.state.userAccount
@@ -136,85 +127,122 @@ export default {
                     );
                     let root = res;
                     root.children.reverse();
-                    console.log(root);
-                    this.traverse(root);
-                    var title = "总资产：" + this.count;
-                    this.option = {
-                        title: [{ text: title, left: "center", top: (this.min * 10) / 600 },
-                        ],
-                        textStyle: {
-                            "fontSize": 15,
-                        },
-                        series: {
-                            type: "sunburst",
-                            center: ["50%", (this.top * 300) / 700],
-                            levels: [
-                                {},
-                                {
-                                    r0: 0,
-                                    r: (this.min * 7) / 60
-                                },
-                                {
-                                    r0: (this.min * 7) / 60,
-                                    r: (this.min * 14) / 60
-                                },
-                                {
-                                    r0: (this.min * 1.8) / 6,
-                                    r: (this.min * 185) / 600,
-                                    itemStyle: {
-                                        shadowBlur: 80
-                                    },
-                                    label: {
-                                        position: "outside",
-                                        color: "#666",
-                                        size: "95px"
-                                    },
-                                    downplay: {
-                                        label: {
-                                            opacity: 0.5
-                                        }
-                                    }
-                                }
-                            ],
-                            data: res.children
-                        }
-                    };
-                    console.log(root);
-                    console.log(this.option);
-                    this.myChart.setOption(this.option);
+                    this.buildPieData(root);
+                    this.bindPieEvents();
+                    this.renderPie(this.pieState.level1Data, this.pieState.totalText, "", false);
                 })
                 .catch(err => {
                     console.log(err);
                 });
         },
-        // 遍历树 深度优先遍历
-        traverse(root) {
-            let children = root.children;
-            let _this = this;
-            if (children && children.length > 0) {
-                for (let i in children) {
-                    _this.traverse(children[i]);
-                }
-            } else {
-                this.count += root.value;
-                if (root.value > 0)
-                    root.children = [
-                        {
-                            name: root.value,
-                            value: root.value,
-                            itemStyle: { color: "#CC3F57" }
-                        }
-                    ];
-                else
-                    root.children = [
-                        {
-                            name: root.value,
-                            value: Math.abs(root.value),
-                            itemStyle: { color: "#CC3F57" }
-                        }
-                    ];
+        // 递归累加叶子节点绝对值（用于饼图占比切片大小）
+        sumLeafValue(node) {
+            if (!node.children || node.children.length === 0) {
+                return Math.abs(node.value || 0);
             }
-            if (root.value < 0) root.value = Math.abs(root.value);
+            return node.children.reduce((s, c) => s + this.sumLeafValue(c), 0);
+        },
+        // 递归累加叶子节点原始值（保留正负号，用于总资产计算）
+        sumLeafSigned(node) {
+            if (!node.children || node.children.length === 0) {
+                return node.value || 0;
+            }
+            return node.children.reduce((s, c) => s + this.sumLeafSigned(c), 0);
+        },
+        // 由根节点构建一级分类数据，并缓存每个一级分类的二级下钻数据
+        buildPieData(root) {
+            let level1 = [];
+            let drillMap = {};
+            let total = 0;
+            ((root && root.children) || []).forEach(cat => {
+                let catTotal = this.sumLeafValue(cat);
+                let catSigned = this.sumLeafSigned(cat);
+                // 总资产按原始正负号累加，信用卡等负债做减项
+                total += catSigned;
+                // value 用绝对值决定切片大小，signed 保留正负号用于标签展示
+                level1.push({ name: cat.name, value: catTotal, signed: catSigned });
+                // 二级分类：若无 children 则用自身值
+                let children = cat.children && cat.children.length
+                    ? cat.children.map(sub => ({
+                        name: sub.name,
+                        value: this.sumLeafValue(sub),
+                        signed: this.sumLeafSigned(sub)
+                    }))
+                    : [{ name: cat.name, value: catTotal, signed: catSigned }];
+                drillMap[cat.name] = children;
+            });
+            this.pieState = {
+                level: 1,
+                level1Data: level1,
+                drillMap: drillMap,
+                totalText: "总资产：" + total,
+                currentName: ""
+            };
+        },
+        // 渲染环形饼图（含中心返回提示）
+        renderPie(dataList, mainTitle, subTitle, showBack) {
+            this.option = {
+                title: [
+                    { text: mainTitle, left: "center", top: (this.min * 10) / 600 },
+                    {
+                        text: subTitle || "", left: "center", top: (this.top * 30) / 600,
+                        textStyle: { color: "#666", fontWeight: "lighter", fontSize: 15 }
+                    },
+                    {
+                        text: showBack ? "点击中心返回" : "", left: "center",
+                        // 对齐到饼图圆心 y 坐标，保证横竖屏下文字都在圆孔中心
+                        top: (this.top * 300) / 700, textVerticalAlign: "middle",
+                        textStyle: { color: "#999", fontSize: 13, fontWeight: "lighter" }
+                    }
+                ],
+                textStyle: { fontSize: 15 },
+                tooltip: {
+                    trigger: "item",
+                    formatter: params => {
+                        let val = params.data.signed !== undefined ? params.data.signed : params.value;
+                        return params.name + ": " + val + " (" + params.percent + "%)";
+                    }
+                },
+                series: [{
+                    type: "pie",
+                    radius: ["20%", "62%"],
+                    center: ["50%", (this.top * 300) / 700],
+                    avoidLabelOverlap: true,
+                    label: {
+                        formatter: params => {
+                            let val = params.data.signed !== undefined ? params.data.signed : params.value;
+                            return params.name + "\n" + val;
+                        }
+                    },
+                    data: dataList
+                }]
+            };
+            // 第二个参数 true：全量刷新，彻底清除旧的 sunburst 配置
+            this.myChart.setOption(this.option, true);
+        },
+        // 绑定点击事件：一级下钻 + 中心空白返回
+        bindPieEvents() {
+            if (this._pieEventBound) return;
+            this._pieEventBound = true;
+            // 点击一级扇区下钻到二级
+            this.myChart.on("click", params => {
+                if (this.pieState.level === 1) {
+                    let children = this.pieState.drillMap[params.name];
+                    if (children && children.length) {
+                        this.pieState.level = 2;
+                        this.pieState.currentName = params.name;
+                        this.renderPie(children, params.name, "", true);
+                    }
+                }
+            });
+            // 点击中心空白（无 target）返回一级总览
+            this.myChart.getZr().on("click", e => {
+                if (this.pieState.level === 2 && !e.target) {
+                    this.pieState.level = 1;
+                    this.pieState.currentName = "";
+                    this.renderPie(this.pieState.level1Data, this.pieState.totalText, "", false);
+                }
+            });
         }
     }
 };
